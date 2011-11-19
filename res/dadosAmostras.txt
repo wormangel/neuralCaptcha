@@ -1,0 +1,47 @@
+Dados
+
+Total de captchas = 900 captchas (1 captcha é formado por 5 caracteres)
+Total de caracteres = 4500 caracteres
+Só foram considerados caracteres com no mínimo 3 amostras (pior caso)
+
+Letra - Quantidade de amostras
+
+A - 0 amostras
+B - 0 amostras
+C - 0 amostras
+D - 0 amostras
+E - 0 amostras
+F - 0 amostras
+G - 0 amostras
+H - 0 amostras
+I - 0 amostras
+J - 0 amostras
+K - 0 amostras
+L - 0 amostras
+M - 0 amostras
+N - 0 amostras
+O - 0 amostras
+P - 0 amostras
+Q - 0 amostras
+R - 0 amostras
+S - 0 amostras
+T - 0 amostras
+U - 0 amostras
+V - 0 amostras
+W - 0 amostras
+X - 0 amostras
+Y - 0 amostras
+Z - 0 amostras
+
+Números - Quantidade de amostras
+
+0 - 0 amostras
+1 - 0 amostras 
+2 - 0 amostras
+3 - 0 amostras
+4 - 0 amostras
+5 - 0 amostras 
+6 - 0 amostras 
+7 - 0 amostras 
+8 - 0 amostras 
+9 - 0 amostras 
