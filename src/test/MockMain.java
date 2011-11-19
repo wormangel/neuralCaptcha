@@ -18,24 +18,12 @@ public class MockMain implements NeuralNetListener {
 	public MockMain() throws IOException, InterruptedException, ClassNotFoundException{
 		NeuralCaptcha rec = new NeuralCaptcha(this);
 		
-		rec.treinaRedes();
+		rec.treinaRede();
 		
 		//rec.SalvarRede();
-		//rec.validaRedes();
+		//rec.validaRede();
 		
 		//System.out.println(rec.identificaNumero("C:\\temp\\porFuncao\\validacao\\letras\\A\\3 (2).jpg"));;
-	}
-	
-	public static void testaDownSample() throws IOException, InterruptedException{
-		int[] x = PreProcessador.ProcessaImagem("C:\\temp\\porFuncao\\treinamento\\3\\4.jpg");
-		double count = 0;
-		for (int i : x){
-			System.out.print(i + ";");
-			count++;
-			if (count % 10 == 0.0){
-				System.out.println();
-			}
-		}
 	}
 
 	public void cicleTerminated(NeuralNetEvent e) {
