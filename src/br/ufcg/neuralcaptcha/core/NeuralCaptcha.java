@@ -127,7 +127,7 @@ public class NeuralCaptcha {
 
 		desiredSynapse1.setInputFile(new File(arquivoSaidaTreinamento));
 		desiredSynapse1.setName("desired1");
-		desiredSynapse1.setAdvancedColumnSelector("ADVANCED_COLUMN_SELECTOR");
+		desiredSynapse1.setAdvancedColumnSelector(ADVANCED_COLUMN_SELECTOR);
 		desiredSynapse1.setFirstRow(1);
 		desiredSynapse1.setLastRow(54); // TODO Quantidade de padroes de treinamento
 
@@ -184,7 +184,7 @@ public class NeuralCaptcha {
 
 		inputSynapse1.setInputFile(new File(arquivoEntradaValidacao));
 		inputSynapse1.setName("input1");
-		inputSynapse1.setAdvancedColumnSelector("1-150");
+		inputSynapse1.setAdvancedColumnSelector(ADVANCED_COLUMN_SELECTOR);
 		inputSynapse1.setFirstRow(1);
 		inputSynapse1.setLastRow(54); // 26 letras - 9 exclu�das
 
@@ -196,7 +196,7 @@ public class NeuralCaptcha {
 
 		desiredSynapse1.setInputFile(new File(arquivoSaidaValidacao));
 		desiredSynapse1.setName("desired1");
-		desiredSynapse1.setAdvancedColumnSelector("1-150");
+		desiredSynapse1.setAdvancedColumnSelector(ADVANCED_COLUMN_SELECTOR);
 		desiredSynapse1.setFirstRow(1);
 		desiredSynapse1.setLastRow(54);
 
