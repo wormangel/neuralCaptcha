@@ -26,7 +26,7 @@ public class ReconhecedorSwing extends JFrame implements NeuralNetListener {
 		ReconhecedorSwing rec = new ReconhecedorSwing();
 		
 		reconhecedor = new NeuralCaptcha(rec);
-		reconhecedor.inicializaRedes();
+		reconhecedor.inicializaRede();
 
 	}
 	
