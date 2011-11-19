@@ -128,7 +128,7 @@ public class Util {
      * @return Uma String contendo o padrão de saída esperado
      */
     public static String obtemSaidaDesejada(String caractere){
-        return SAIDAS_DESEJADAS.get(caractere);
+        return SAIDAS_DESEJADAS.get(caractere.toUpperCase());
     }
 
     /**
