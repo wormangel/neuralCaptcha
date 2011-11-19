@@ -6,8 +6,9 @@ import org.joone.engine.Monitor;
 import org.joone.engine.NeuralNetEvent;
 import org.joone.engine.NeuralNetListener;
 
-import core.PreProcessador;
-import core.NeuralCaptcha;
+import br.ufcg.neuralcaptcha.core.NeuralCaptcha;
+import br.ufcg.neuralcaptcha.core.PreProcessor;
+
 
 public class MockMain implements NeuralNetListener {
 

@@ -1,16 +1,18 @@
-package core;
+package br.ufcg.neuralcaptcha.core;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.Buffer;
 
 import javax.imageio.ImageIO;
 
-public class PreProcessador {
+import br.ufcg.neuralcaptcha.util.BitmapExtractor;
+
+
+public class PreProcessor {
 
 	public static int[][] processaImagem(String path) throws IOException, InterruptedException{
-        // Este é o captcha original
+        // Este ï¿½ o captcha original
         BufferedImage img = ImageIO.read(new File(path));
 
         // Remove excesso da imagem
@@ -24,18 +26,18 @@ public class PreProcessador {
         // Recorta os caracteres
         BufferedImage caracteres[] = recorta(img);
 
-        // A entrada da rede será um array de 5 linhas, cada linha contendo o bitmap de cada caracteres
+        // A entrada da rede serï¿½ um array de 5 linhas, cada linha contendo o bitmap de cada caracteres
         int[][] entradaDaRede =
             new int[NeuralCaptcha.TAMANHO_CAPTCHA][NeuralCaptcha.TAMANHO_CARACTERE_W * NeuralCaptcha.TAMANHO_CARACTERE_H];
         for (int i = 0; i < NeuralCaptcha.TAMANHO_CAPTCHA; i++){
-            entradaDaRede[i] = Util.extraiBitmap(caracteres[i]);
+            entradaDaRede[i] = BitmapExtractor.extraiBitmap(caracteres[i]);
         }
         
 		return entradaDaRede;
 	}
 
     /**
-     * Remove a linha inferior do captcha, que contém uma mensagem do site.
+     * Remove a linha inferior do captcha, que contï¿½m uma mensagem do site.
      * @param img A imagem original do captcha
      * @return O captcha sem a linha inferior
      */
@@ -44,18 +46,18 @@ public class PreProcessador {
     }
 
     /**
-     * Realiza a diminuição da imagem para o tamanho padronizado que será usado pela rede.
-     * @param img A imagem a ser diminuída
-     * @return A imagem no novo tamanho após o downsample
+     * Realiza a diminuiï¿½ï¿½o da imagem para o tamanho padronizado que serï¿½ usado pela rede.
+     * @param img A imagem a ser diminuï¿½da
+     * @return A imagem no novo tamanho apï¿½s o downsample
      */
     private static BufferedImage downSample(BufferedImage img){
         return null;
     }
 
     /**
-     * Converte uma imagem para bitmap monocromático 1bpp. Cada pixel da imagem será ou branco ou preto.
+     * Converte uma imagem para bitmap monocromï¿½tico 1bpp. Cada pixel da imagem serï¿½ ou branco ou preto.
      * @param img A imagem a ser convertida
-     * @return A imagem já convertida no novo formato
+     * @return A imagem jï¿½ convertida no novo formato
      */
     private static BufferedImage converteParaBitmap(BufferedImage img){
         return null;

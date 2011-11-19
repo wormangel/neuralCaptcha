@@ -8,7 +8,8 @@ import org.joone.engine.Monitor;
 import org.joone.engine.NeuralNetEvent;
 import org.joone.engine.NeuralNetListener;
 
-import core.NeuralCaptcha;
+import br.ufcg.neuralcaptcha.core.NeuralCaptcha;
+
 
 public class ReconhecedorSwing extends JFrame implements NeuralNetListener {
 	

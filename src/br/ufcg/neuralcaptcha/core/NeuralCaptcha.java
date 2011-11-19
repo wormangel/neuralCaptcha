@@ -1,4 +1,4 @@
-package core;
+package br.ufcg.neuralcaptcha.core;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,25 +18,29 @@ import org.joone.io.FileInputSynapse;
 import org.joone.io.MemoryOutputSynapse;
 import org.joone.net.NeuralNet;
 
+import br.ufcg.neuralcaptcha.util.BitMapper;
+import br.ufcg.neuralcaptcha.util.BitmapExtractor;
+
+
 /**
- * Classe principal do projeto, contém a rede neural MLP e fornece métodos para que uma aplicação efetue
- * operações usando a rede.
- * Os seguintes caracteres não foram consideradas por não serem suportados no captcha escolhido: I,O,V,0,1
+ * Classe principal do projeto, contï¿½m a rede neural MLP e fornece mï¿½todos para que uma aplicaï¿½ï¿½o efetue
+ * operaï¿½ï¿½es usando a rede.
+ * Os seguintes caracteres nï¿½o foram consideradas por nï¿½o serem suportados no captcha escolhido: I,O,V,0,1
  *
- * @author Lucas Medeiros, Vítor Amaral, Vítor Avelino
+ * @author Lucas Medeiros, Vï¿½tor Amaral, Vï¿½tor Avelino
  *
  */
 public class NeuralCaptcha {
 
 	private NeuralNet rede;
 
-	private final int NEURONIOS_DE_SAIDA = 31; // 26 letras + 10 dígitos - 5 exclusões
+	private final int NEURONIOS_DE_SAIDA = 31; // 26 letras + 10 dï¿½gitos - 5 exclusï¿½es
 
     public final static int TAMANHO_CAPTCHA = 5;
     public final static int TAMANHO_CARACTERE_W = 28, TAMANHO_CARACTERE_H = 45;
     private final static String ADVANCED_COLUMN_SELECTOR = "1-" + String.valueOf(TAMANHO_CARACTERE_W * TAMANHO_CARACTERE_H);
 
-    // Diretórios contendo as imagens
+    // Diretï¿½rios contendo as imagens
 	private final String diretorioArquivosTreinamento = "C:\\temp\\porFuncao\\treinamento\\letras";
 	private final String diretorioArquivosValidacao = "C:\\temp\\porFuncao\\validacao\\letras";
 	
@@ -44,37 +48,30 @@ public class NeuralCaptcha {
 	private final String arquivoEntradaTreinamento = "C:\\temp\\inputTreinamento.txt";
 	private final String arquivoSaidaTreinamento = "C:\\temp\\outputTreinamento.txt";
 	
-	// Validação
+	// Validaï¿½ï¿½o
 	private final String arquivoEntradaValidacao = "C:\\temp\\inputValidacao.txt";
 	private final String arquivoSaidaValidacao = "C:\\temp\\outputValidacao.txt";
 	
-    public static void main(String args[]) throws IOException, InterruptedException {
-    	NeuralCaptcha rec = new NeuralCaptcha();
-        
-        rec.inicializaRede();
-        rec.treinaRede();
-    }
-    
 	/**
      * Recebe uma string correspondente ao caminho no disco para a imagem a ser identificada.
-     * A imagem é pré-processada para obter a entrada da rede neural e submetida à mesma em seguida.
+     * A imagem ï¿½ prï¿½-processada para obter a entrada da rede neural e submetida ï¿½ mesma em seguida.
      * 
      * @param pathImagemNaoTratada O caminho para a imagem contendo o captcha a ser identificado.
      * @throws InterruptedException 
      * @throws IOException 
      */
     public String identificaCaptcha(String pathImagemNaoTratada) throws IOException, InterruptedException {
-    	int[][] entradaDaRede = PreProcessador.processaImagem(pathImagemNaoTratada);
+    	int[][] entradaDaRede = PreProcessor.processaImagem(pathImagemNaoTratada);
     	return identificaCaptcha(entradaDaRede);
     }
     
 	/**
-     * Recebe um array de bits correspondente à imagem do captcha já pré-processada e identifica o mesmo
-     * @param entradaDaRede O array de bits correspondente aos 5 caracteres do captcha, já pré-processados
+     * Recebe um array de bits correspondente ï¿½ imagem do captcha jï¿½ prï¿½-processada e identifica o mesmo
+     * @param entradaDaRede O array de bits correspondente aos 5 caracteres do captcha, jï¿½ prï¿½-processados
      * @throws IOException 
      */
     public String identificaCaptcha(int[][] entradaDaRede) throws IOException{
-    	// Cria arquivo temporário para servir de entrada para a rede
+    	// Cria arquivo temporï¿½rio para servir de entrada para a rede
     	File arquivoDeEntrada = criaArquivoParaReconhecimento(entradaDaRede);
     	
     	// Remove sinapses de entrada anteriores
@@ -92,13 +89,13 @@ public class NeuralCaptcha {
 		// Coloca esta sinapse como entrada da camada de entrada
 		rede.getInputLayer().addInputSynapse(inputSynapse1);
 		
-		// Remove sinapses de saída anteriores
+		// Remove sinapses de saï¿½da anteriores
     	rede.getOutputLayer().removeAllOutputs();
     	
-    	// Adiciona uma nova camada de saída
+    	// Adiciona uma nova camada de saï¿½da
 		MemoryOutputSynapse outputSynapse1 = new MemoryOutputSynapse();
 
-		// Coloca esta sinapse como saída da camada de entrada
+		// Coloca esta sinapse como saï¿½da da camada de entrada
 		rede.getOutputLayer().addOutputSynapse(outputSynapse1);
 		
 		rede.getMonitor().setTotCicles(1);
@@ -107,11 +104,10 @@ public class NeuralCaptcha {
 		rede.go();
 		double[] resposta = outputSynapse1.getNextPattern();
 		
-		return Util.converteArrayDeBitsParaLetra(resposta);
+		return BitMapper.converteArrayDeBitsParaLetra(resposta);
 	}
 
 	public void treinaRede() throws IOException, InterruptedException {
-
     	// Prepara a entrada para o treinamento da rede
     	geraArquivosDeTreinamento();
 
@@ -126,7 +122,7 @@ public class NeuralCaptcha {
 		// Coloca esta sinapse como entrada da camada de entrada
 		rede.getInputLayer().addInputSynapse(inputSynapse1);
 
-		// Prepara a saída para o treinamento da rede
+		// Prepara a saï¿½da para o treinamento da rede
 		FileInputSynapse desiredSynapse1 = new FileInputSynapse();
 
 		desiredSynapse1.setInputFile(new File(arquivoSaidaTreinamento));
@@ -138,7 +134,7 @@ public class NeuralCaptcha {
 		TeachingSynapse trainer = new TeachingSynapse();
 		trainer.setDesired(desiredSynapse1);
 
-		// Coloca esta sinapse como saída da camada de saída
+		// Coloca esta sinapse como saï¿½da da camada de saï¿½da
 		rede.setTeacher(trainer);
 		rede.getOutputLayer().addOutputSynapse(trainer);
 
@@ -152,14 +148,14 @@ public class NeuralCaptcha {
         monitor.setTotCicles(150);
         monitor.setLearning(true);
         rede.go(true);
-        System.out.println("Treinamento acabou!. Último RMSE="+ rede.getMonitor().getGlobalError());
+        System.out.println("Treinamento acabou!. ï¿½ltimo RMSE="+ rede.getMonitor().getGlobalError());
     }
 	
 	/**
-	 * Recebe um array bidimensional de bits e o escreve em um arquivo que servirá de entrada para a rede neural.
+	 * Recebe um array bidimensional de bits e o escreve em um arquivo que servirï¿½ de entrada para a rede neural.
      * O array deve estar corretamente processado (5 linhas, uma para cada caractere, cada linha contendo o bitmap do caractere)
-	 * @param entradaDaRede O array já pré-processado
-	 * @return O arquivo criado que servirá de entrada para a rede neural
+	 * @param entradaDaRede O array jï¿½ prï¿½-processado
+	 * @return O arquivo criado que servirï¿½ de entrada para a rede neural
 	 * @throws IOException
 	 */
 	private File criaArquivoParaReconhecimento(int[][] entradaDaRede) throws IOException{
@@ -190,12 +186,12 @@ public class NeuralCaptcha {
 		inputSynapse1.setName("input1");
 		inputSynapse1.setAdvancedColumnSelector("1-150");
 		inputSynapse1.setFirstRow(1);
-		inputSynapse1.setLastRow(54); // 26 letras - 9 excluídas
+		inputSynapse1.setLastRow(54); // 26 letras - 9 excluï¿½das
 
 		// Coloca esta sinapse como entrada da camada de entrada
 		rede.getInputLayer().addInputSynapse(inputSynapse1);
 
-		// Prepara a saída para o treinamento da rede
+		// Prepara a saï¿½da para o treinamento da rede
 		FileInputSynapse desiredSynapse1 = new FileInputSynapse();
 
 		desiredSynapse1.setInputFile(new File(arquivoSaidaValidacao));
@@ -207,7 +203,7 @@ public class NeuralCaptcha {
 		TeachingSynapse trainer = new TeachingSynapse();
 		trainer.setDesired(desiredSynapse1);
 
-		// Coloca esta sinapse como saída da camada de saída
+		// Coloca esta sinapse como saï¿½da da camada de saï¿½da
 		rede.setTeacher(trainer);
 		rede.getOutputLayer().addOutputSynapse(trainer);
 
@@ -234,12 +230,12 @@ public class NeuralCaptcha {
 
 		// Tamanhos
         // Tamanho da camada de entrada
-		input.setRows(TAMANHO_CARACTERE_W * TAMANHO_CARACTERE_H); // Número de pixels de cada caractere
+		input.setRows(TAMANHO_CARACTERE_W * TAMANHO_CARACTERE_H); // Nï¿½mero de pixels de cada caractere
 
-        // Tamanho da camada escondida - Configurável, altera o desempenho
+        // Tamanho da camada escondida - Configurï¿½vel, altera o desempenho
 		hidden.setRows(100);
 
-         // Tamanho da camada de saída - número de respostas possíveis da rede (número de caracteres reconhecíveis)
+         // Tamanho da camada de saï¿½da - nï¿½mero de respostas possï¿½veis da rede (nï¿½mero de caracteres reconhecï¿½veis)
 		output.setRows(NEURONIOS_DE_SAIDA); //
 
 		input.setLayerName("inputLayer");
@@ -250,15 +246,15 @@ public class NeuralCaptcha {
 		FullSynapse synapse_IH = new FullSynapse(); /* input -> hidden conn. */
 		FullSynapse synapse_HO = new FullSynapse(); /* hidden -> output conn. */
 
-		// Conecta a camada de entrada à camada escondida
+		// Conecta a camada de entrada ï¿½ camada escondida
 		input.addOutputSynapse(synapse_IH);
 		hidden.addInputSynapse(synapse_IH);
 
-		// Conecta a camada escondida à camada de saída
+		// Conecta a camada escondida ï¿½ camada de saï¿½da
 		hidden.addOutputSynapse(synapse_HO);
 		output.addInputSynapse(synapse_HO);
 
-		// Adiciona as camadas criadas à rede neural
+		// Adiciona as camadas criadas ï¿½ rede neural
 		rede = new NeuralNet();
 
 		rede.addLayer(input, NeuralNet.INPUT_LAYER);
@@ -273,7 +269,7 @@ public class NeuralCaptcha {
 	public NeuralCaptcha(){}
 	
 	/**
-	 * Cria uma instância do reconhecedor e se registra como observador dos eventos da rede neural.
+	 * Cria uma instï¿½ncia do reconhecedor e se registra como observador dos eventos da rede neural.
 	 */
 	public NeuralCaptcha(NeuralNetListener listener){
 		inicializaRede();
@@ -291,9 +287,9 @@ public class NeuralCaptcha {
 	}
 
     /**
-     * Varre o diretório de treinamento e os diretórios de cada caractere, extrai o bitmap das imagens em um array e monta
-     * o conjunto de todos esses bitmaps em um arquivo de texto que servirá de entrada para a rede. Monta também um arquivo
-     * de texto contendo as saídas esperadas para cada padrão de treinamento, em linhas correspondentes ao arquivo de entrada.
+     * Varre o diretï¿½rio de treinamento e os diretï¿½rios de cada caractere, extrai o bitmap das imagens em um array e monta
+     * o conjunto de todos esses bitmaps em um arquivo de texto que servirï¿½ de entrada para a rede. Monta tambï¿½m um arquivo
+     * de texto contendo as saï¿½das esperadas para cada padrï¿½o de treinamento, em linhas correspondentes ao arquivo de entrada.
      * @throws IOException
      * @throws InterruptedException
      */
@@ -308,24 +304,24 @@ public class NeuralCaptcha {
 		FileWriter writerOutput = new FileWriter(outputTreinamento);
 		writerOutput.flush();
 		
-		// Pra cada diretório (correspondente a um caractere) no diretório de treinamento
+		// Pra cada diretï¿½rio (correspondente a um caractere) no diretï¿½rio de treinamento
 		for (String dirCaractere : diretoriosTreinamento.list()) {
 			if (dirCaractere.length() > 1){
 				continue;
 			}
-			// Obtém a lista de imagens no diretório desse caractere
+			// Obtï¿½m a lista de imagens no diretï¿½rio desse caractere
             
 			File dirComImagensDoCaractere = new File(diretorioArquivosTreinamento + "\\" + dirCaractere);
 			// Pra cada imagem desse caractere
 			for (String arquivoImagem : dirComImagensDoCaractere.list()) {
 				
 				// Converte para array de ints
-				int[] imagemEmBits = Util.extraiBitmap(dirComImagensDoCaractere + "\\" + arquivoImagem);
+				int[] imagemEmBits = BitmapExtractor.extraiBitmap(dirComImagensDoCaractere + "\\" + arquivoImagem);
 				// Converte para string e escreve no arquivo de entrada
-				writerInput.write(Util.converteArrayDeBitsParaString(imagemEmBits) + "\n");
+				writerInput.write(BitMapper.converteArrayDeBitsParaString(imagemEmBits) + "\n");
 				
-				// Escreve no arquivo de saída esperada a linha correspondente ao caractere
-				writerOutput.write(Util.obtemSaidaDesejada(dirCaractere) + "\n");
+				// Escreve no arquivo de saï¿½da esperada a linha correspondente ao caractere
+				writerOutput.write(BitMapper.obtemSaidaDesejada(dirCaractere) + "\n");
 			}
 		}
 		
@@ -334,9 +330,9 @@ public class NeuralCaptcha {
 	}
 
     /**
-     * Varre o diretório de validação e os diretórios de cada caractere, extrai o bitmap das imagens em um array e monta
-     * o conjunto de todos esses bitmaps em um arquivo de texto que servirá de entrada para a rede. Monta também um arquivo
-     * de texto contendo as saídas esperadas para cada padrão de treinamento, em linhas correspondentes ao arquivo de entrada.
+     * Varre o diretï¿½rio de validaï¿½ï¿½o e os diretï¿½rios de cada caractere, extrai o bitmap das imagens em um array e monta
+     * o conjunto de todos esses bitmaps em um arquivo de texto que servirï¿½ de entrada para a rede. Monta tambï¿½m um arquivo
+     * de texto contendo as saï¿½das esperadas para cada padrï¿½o de treinamento, em linhas correspondentes ao arquivo de entrada.
      * @throws IOException
      * @throws InterruptedException
      */
@@ -351,24 +347,24 @@ public class NeuralCaptcha {
 		FileWriter writerOutput = new FileWriter(outputValidacao);
 		writerOutput.flush();
 		
-		// Pra cada diretório (letra) no diretório de validação
+		// Pra cada diretï¿½rio (letra) no diretï¿½rio de validaï¿½ï¿½o
 		for (String dirCaractere : diretoriosValidacao.list()) {
 			if (dirCaractere.length() > 1){
 				continue;
 			}
-			// Obtém a lista de imagens no diretório desse caractere
+			// Obtï¿½m a lista de imagens no diretï¿½rio desse caractere
             
 			File dirComImagensDoCaractere = new File(diretorioArquivosValidacao + "\\" + dirCaractere);
 			// Pra cada imagem desse caractere
 			for (String arquivoImagem : dirComImagensDoCaractere.list()) {
 				
 				// Converte para array de ints
-				int[] imagemEmBits = Util.extraiBitmap(dirComImagensDoCaractere + "\\" + arquivoImagem);
+				int[] imagemEmBits = BitmapExtractor.extraiBitmap(dirComImagensDoCaractere + "\\" + arquivoImagem);
 				// Converte para string e escreve no arquivo de entrada
-				writerInput.write(Util.converteArrayDeBitsParaString(imagemEmBits) + "\n");
+				writerInput.write(BitMapper.converteArrayDeBitsParaString(imagemEmBits) + "\n");
 				
-				// Escreve no arquivo de saída esperada a linha correspondente ao caractere
-				writerOutput.write(Util.obtemSaidaDesejada(dirCaractere) + "\n");
+				// Escreve no arquivo de saï¿½da esperada a linha correspondente ao caractere
+				writerOutput.write(BitMapper.obtemSaidaDesejada(dirCaractere) + "\n");
 			}
 		}
 		
@@ -376,7 +372,7 @@ public class NeuralCaptcha {
 		writerOutput.close();		
 	}
 
-    // Métodos para lidar com a persistência da rede (para não ter que treina-la novamente a cada execução)
+    // Mï¿½todos para lidar com a persistï¿½ncia da rede (para nï¿½o ter que treina-la novamente a cada execuï¿½ï¿½o)
 
     /**
      * Salva a rede neural em disco.
@@ -390,7 +386,7 @@ public class NeuralCaptcha {
 	}
 
     /**
-     * Verifica se a rede neural foi persistidda no caminho pré-determinado. Se sim, carrega a rede armazenada, se não,
+     * Verifica se a rede neural foi persistidda no caminho prï¿½-determinado. Se sim, carrega a rede armazenada, se nï¿½o,
      * inicializa a rede neural.
      * @throws IOException
      * @throws ClassNotFoundException
