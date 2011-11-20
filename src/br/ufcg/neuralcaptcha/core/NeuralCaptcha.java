@@ -39,7 +39,9 @@ public class NeuralCaptcha {
     public final static int TAMANHO_CARACTERE_W = 28, TAMANHO_CARACTERE_H = 45;
     private final static String ADVANCED_COLUMN_SELECTOR = "1-" + String.valueOf(TAMANHO_CARACTERE_W * TAMANHO_CARACTERE_H);
 
-	/**
+    public NeuralCaptcha() { }
+
+    /**
      * Recebe uma string correspondente ao caminho no disco para a imagem a ser identificada.
      * A imagem � pr�-processada para obter a entrada da rede neural e submetida � mesma em seguida.
      * 
@@ -228,7 +230,6 @@ public class NeuralCaptcha {
 		rede.addNeuralNetListener(listener);
 	}
 	
-	public NeuralCaptcha(){}
 	
 	/**
 	 * Cria uma inst�ncia do reconhecedor e se registra como observador dos eventos da rede neural.

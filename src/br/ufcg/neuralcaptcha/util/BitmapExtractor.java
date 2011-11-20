@@ -44,7 +44,7 @@ public class BitmapExtractor {
      * @return Um array de inteiros contendo o bitmap da imagem.
      */
     public static int[] extraiBitmap(String pathImg) throws IOException {
-         BufferedImage img = ImageIO.read(new File(pathImg));
+    	BufferedImage img = ImageIO.read(new File(pathImg));
         
         int[] array = new int[NeuralCaptcha.TAMANHO_CARACTERE_W * NeuralCaptcha.TAMANHO_CARACTERE_H];
 

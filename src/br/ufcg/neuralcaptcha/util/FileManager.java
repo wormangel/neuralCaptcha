@@ -9,16 +9,16 @@ import br.ufcg.neuralcaptcha.core.NeuralCaptcha;
 public class FileManager {
 	
 	// Diret�rios contendo as imagens
-	public static final String DIRETORIO_TREINAMENTO = "C:\\temp\\porFuncao\\treinamento\\letras";
-	public static final String DIRETORIO_VALIDACAO = "C:\\temp\\porFuncao\\validacao\\letras";
+	public static final String DIRETORIO_TREINAMENTO = "res/training/";
+	public static final String DIRETORIO_VALIDACAO = "validation/training/";
 	
 	// Treinamento
-	public static final String ENTRADA_TREINAMENTO = "C:\\temp\\inputTreinamento.txt";
-	public static final String SAIDA_TREINAMENTO = "C:\\temp\\outputTreinamento.txt";
+	public static final String ENTRADA_TREINAMENTO = "res/trainingInput.txt";
+	public static final String SAIDA_TREINAMENTO = "res/trainingOutput.txt";
 	
 	// Valida��o
-	public static final String ENTRADA_VALIDACAO = "C:\\temp\\inputValidacao.txt";
-	public static final String SAIDA_VALIDACAO = "C:\\temp\\outputValidacao.txt";
+	public static final String ENTRADA_VALIDACAO = "res/validationInput.txt";
+	public static final String SAIDA_VALIDACAO = "res/validationOutput.txt";
 	
 	/**
 	 * Recebe um array bidimensional de bits e o escreve em um arquivo que servir� de entrada para a rede neural.
@@ -64,16 +64,17 @@ public class FileManager {
 		
 		// Pra cada diret�rio (correspondente a um caractere) no diret�rio de treinamento
 		for (String dirCaractere : diretoriosTreinamento.list()) {
+			System.out.println(dirCaractere);
 			if (dirCaractere.length() > 1){
 				continue;
 			}
 			// Obt�m a lista de imagens no diret�rio desse caractere
             
-			File dirComImagensDoCaractere = new File(DIRETORIO_TREINAMENTO + "\\" + dirCaractere);
+			File dirComImagensDoCaractere = new File(DIRETORIO_TREINAMENTO + "/" + dirCaractere);
 			// Pra cada imagem desse caractere
 			for (String arquivoImagem : dirComImagensDoCaractere.list()) {
 				// Converte para array de ints
-				int[] imagemEmBits = BitmapExtractor.extraiBitmap(dirComImagensDoCaractere + "\\" + arquivoImagem);
+				int[] imagemEmBits = BitmapExtractor.extraiBitmap(dirComImagensDoCaractere + "/" + arquivoImagem);
 				// Converte para string e escreve no arquivo de entrada
 				writerInput.write(BitMapper.converteArrayDeBitsParaString(imagemEmBits) + "\n");
 				
