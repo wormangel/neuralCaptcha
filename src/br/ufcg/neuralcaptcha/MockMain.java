@@ -21,6 +21,7 @@ public class MockMain implements NeuralNetListener {
 		rec.treinaRede();
         
         System.out.println("Resultado: " + rec.identificaCaractere(FileManager.DIRETORIO_TESTE + "a" + "\\" + "8842.bmp"));
+        System.out.println("Resultado: " + rec.identificaCaractere(FileManager.DIRETORIO_TESTE + "b" + "\\" + "8570.bmp"));
 		
 		//rec.SalvarRede();
 		//rec.validaRede();
@@ -38,12 +39,12 @@ public class MockMain implements NeuralNetListener {
 	}
 
 	public void netStarted(NeuralNetEvent e) {
-		System.out.println("Treinando...");
+		System.out.println("Rede começou!");
 		
 	}
 
 	public void netStopped(NeuralNetEvent e) {
-		System.out.println("Treinado!");
+		System.out.println("Rede parou!");
 		
 	}
 
