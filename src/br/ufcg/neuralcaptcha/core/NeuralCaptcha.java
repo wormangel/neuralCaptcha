@@ -3,7 +3,6 @@ package br.ufcg.neuralcaptcha.core;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -19,7 +18,7 @@ import org.joone.io.MemoryOutputSynapse;
 import org.joone.net.NeuralNet;
 
 import br.ufcg.neuralcaptcha.util.BitMapper;
-import br.ufcg.neuralcaptcha.util.BitmapExtractor;
+import br.ufcg.neuralcaptcha.util.FileManager;
 
 
 /**
@@ -40,18 +39,6 @@ public class NeuralCaptcha {
     public final static int TAMANHO_CARACTERE_W = 28, TAMANHO_CARACTERE_H = 45;
     private final static String ADVANCED_COLUMN_SELECTOR = "1-" + String.valueOf(TAMANHO_CARACTERE_W * TAMANHO_CARACTERE_H);
 
-    // Diret�rios contendo as imagens
-	private final String diretorioArquivosTreinamento = "C:\\temp\\porFuncao\\treinamento\\letras";
-	private final String diretorioArquivosValidacao = "C:\\temp\\porFuncao\\validacao\\letras";
-	
-	// Treinamento
-	private final String arquivoEntradaTreinamento = "C:\\temp\\inputTreinamento.txt";
-	private final String arquivoSaidaTreinamento = "C:\\temp\\outputTreinamento.txt";
-	
-	// Valida��o
-	private final String arquivoEntradaValidacao = "C:\\temp\\inputValidacao.txt";
-	private final String arquivoSaidaValidacao = "C:\\temp\\outputValidacao.txt";
-	
 	/**
      * Recebe uma string correspondente ao caminho no disco para a imagem a ser identificada.
      * A imagem � pr�-processada para obter a entrada da rede neural e submetida � mesma em seguida.
@@ -72,7 +59,7 @@ public class NeuralCaptcha {
      */
     public String identificaCaptcha(int[][] entradaDaRede) throws IOException{
     	// Cria arquivo tempor�rio para servir de entrada para a rede
-    	File arquivoDeEntrada = criaArquivoParaReconhecimento(entradaDaRede);
+    	File arquivoDeEntrada = FileManager.criaArquivoParaReconhecimento(entradaDaRede);
     	
     	// Remove sinapses de entrada anteriores
     	rede.getInputLayer().removeAllInputs();
@@ -109,11 +96,11 @@ public class NeuralCaptcha {
 
 	public void treinaRede() throws IOException, InterruptedException {
     	// Prepara a entrada para o treinamento da rede
-    	geraArquivosDeTreinamento();
+    	FileManager.geraArquivosDeTreinamento();
 
 		FileInputSynapse inputSynapse1 = new FileInputSynapse();
 
-		inputSynapse1.setInputFile(new File(arquivoEntradaTreinamento));
+		inputSynapse1.setInputFile(new File(FileManager.ENTRADA_TREINAMENTO));
 		inputSynapse1.setName("input1");
 		inputSynapse1.setAdvancedColumnSelector(ADVANCED_COLUMN_SELECTOR);
 		inputSynapse1.setFirstRow(1);
@@ -125,7 +112,7 @@ public class NeuralCaptcha {
 		// Prepara a sa�da para o treinamento da rede
 		FileInputSynapse desiredSynapse1 = new FileInputSynapse();
 
-		desiredSynapse1.setInputFile(new File(arquivoSaidaTreinamento));
+		desiredSynapse1.setInputFile(new File(FileManager.SAIDA_TREINAMENTO));
 		desiredSynapse1.setName("desired1");
 		desiredSynapse1.setAdvancedColumnSelector("ADVANCED_COLUMN_SELECTOR");
 		desiredSynapse1.setFirstRow(1);
@@ -151,38 +138,13 @@ public class NeuralCaptcha {
         System.out.println("Treinamento acabou!. �ltimo RMSE="+ rede.getMonitor().getGlobalError());
     }
 	
-	/**
-	 * Recebe um array bidimensional de bits e o escreve em um arquivo que servir� de entrada para a rede neural.
-     * O array deve estar corretamente processado (5 linhas, uma para cada caractere, cada linha contendo o bitmap do caractere)
-	 * @param entradaDaRede O array j� pr�-processado
-	 * @return O arquivo criado que servir� de entrada para a rede neural
-	 * @throws IOException
-	 */
-	private File criaArquivoParaReconhecimento(int[][] entradaDaRede) throws IOException{
-		File arquivoDeEntrada = new File("C:\\entradaNeural.txt");
-    	FileWriter writer = new FileWriter(arquivoDeEntrada);
-    	writer.flush();
-    	StringBuilder str = new StringBuilder();
-    	for(int i = 0; i < TAMANHO_CAPTCHA; i++){
-            for (int j = 0; j < NeuralCaptcha.TAMANHO_CARACTERE_W * NeuralCaptcha.TAMANHO_CARACTERE_H; j++){
-                str.append(entradaDaRede[i][j]);
-    		    str.append(";");
-            }
-    	}
-    	str.deleteCharAt(str.length()-1);
-    	writer.write(str.toString());
-    	writer.close();
-    	return arquivoDeEntrada;
-	}
-    
-
     public void validaRede() throws IOException, InterruptedException {
     	// Prepara a entrada para o treinamento da rede
-    	geraArquivosDeValidacao();
+    	FileManager.geraArquivosDeValidacao();
 
 		FileInputSynapse inputSynapse1 = new FileInputSynapse();
 
-		inputSynapse1.setInputFile(new File(arquivoEntradaValidacao));
+		inputSynapse1.setInputFile(new File(FileManager.ENTRADA_VALIDACAO));
 		inputSynapse1.setName("input1");
 		inputSynapse1.setAdvancedColumnSelector("1-150");
 		inputSynapse1.setFirstRow(1);
@@ -194,7 +156,7 @@ public class NeuralCaptcha {
 		// Prepara a sa�da para o treinamento da rede
 		FileInputSynapse desiredSynapse1 = new FileInputSynapse();
 
-		desiredSynapse1.setInputFile(new File(arquivoSaidaValidacao));
+		desiredSynapse1.setInputFile(new File(FileManager.SAIDA_VALIDACAO));
 		desiredSynapse1.setName("desired1");
 		desiredSynapse1.setAdvancedColumnSelector("1-150");
 		desiredSynapse1.setFirstRow(1);
@@ -286,91 +248,7 @@ public class NeuralCaptcha {
 		adicionaListener(listener);
 	}
 
-    /**
-     * Varre o diret�rio de treinamento e os diret�rios de cada caractere, extrai o bitmap das imagens em um array e monta
-     * o conjunto de todos esses bitmaps em um arquivo de texto que servir� de entrada para a rede. Monta tamb�m um arquivo
-     * de texto contendo as sa�das esperadas para cada padr�o de treinamento, em linhas correspondentes ao arquivo de entrada.
-     * @throws IOException
-     * @throws InterruptedException
-     */
-	private void geraArquivosDeTreinamento() throws IOException, InterruptedException{
-		File diretoriosTreinamento = new File(diretorioArquivosTreinamento);
-
-		File inputTreinamento = new File(arquivoEntradaTreinamento);
-		FileWriter writerInput = new FileWriter(inputTreinamento);
-		writerInput.flush();
-		
-		File outputTreinamento = new File(arquivoSaidaTreinamento);
-		FileWriter writerOutput = new FileWriter(outputTreinamento);
-		writerOutput.flush();
-		
-		// Pra cada diret�rio (correspondente a um caractere) no diret�rio de treinamento
-		for (String dirCaractere : diretoriosTreinamento.list()) {
-			if (dirCaractere.length() > 1){
-				continue;
-			}
-			// Obt�m a lista de imagens no diret�rio desse caractere
-            
-			File dirComImagensDoCaractere = new File(diretorioArquivosTreinamento + "\\" + dirCaractere);
-			// Pra cada imagem desse caractere
-			for (String arquivoImagem : dirComImagensDoCaractere.list()) {
-				
-				// Converte para array de ints
-				int[] imagemEmBits = BitmapExtractor.extraiBitmap(dirComImagensDoCaractere + "\\" + arquivoImagem);
-				// Converte para string e escreve no arquivo de entrada
-				writerInput.write(BitMapper.converteArrayDeBitsParaString(imagemEmBits) + "\n");
-				
-				// Escreve no arquivo de sa�da esperada a linha correspondente ao caractere
-				writerOutput.write(BitMapper.obtemSaidaDesejada(dirCaractere) + "\n");
-			}
-		}
-		
-		writerInput.close();
-		writerOutput.close();		
-	}
-
-    /**
-     * Varre o diret�rio de valida��o e os diret�rios de cada caractere, extrai o bitmap das imagens em um array e monta
-     * o conjunto de todos esses bitmaps em um arquivo de texto que servir� de entrada para a rede. Monta tamb�m um arquivo
-     * de texto contendo as sa�das esperadas para cada padr�o de treinamento, em linhas correspondentes ao arquivo de entrada.
-     * @throws IOException
-     * @throws InterruptedException
-     */
-	private void geraArquivosDeValidacao() throws IOException, InterruptedException{
-		File diretoriosValidacao = new File(diretorioArquivosValidacao);
-
-		File inputValidacao = new File(arquivoEntradaValidacao);
-		FileWriter writerInput = new FileWriter(inputValidacao);
-		writerInput.flush();
-		
-		File outputValidacao = new File(arquivoSaidaValidacao);
-		FileWriter writerOutput = new FileWriter(outputValidacao);
-		writerOutput.flush();
-		
-		// Pra cada diret�rio (letra) no diret�rio de valida��o
-		for (String dirCaractere : diretoriosValidacao.list()) {
-			if (dirCaractere.length() > 1){
-				continue;
-			}
-			// Obt�m a lista de imagens no diret�rio desse caractere
-            
-			File dirComImagensDoCaractere = new File(diretorioArquivosValidacao + "\\" + dirCaractere);
-			// Pra cada imagem desse caractere
-			for (String arquivoImagem : dirComImagensDoCaractere.list()) {
-				
-				// Converte para array de ints
-				int[] imagemEmBits = BitmapExtractor.extraiBitmap(dirComImagensDoCaractere + "\\" + arquivoImagem);
-				// Converte para string e escreve no arquivo de entrada
-				writerInput.write(BitMapper.converteArrayDeBitsParaString(imagemEmBits) + "\n");
-				
-				// Escreve no arquivo de sa�da esperada a linha correspondente ao caractere
-				writerOutput.write(BitMapper.obtemSaidaDesejada(dirCaractere) + "\n");
-			}
-		}
-		
-		writerInput.close();
-		writerOutput.close();		
-	}
+    
 
     // M�todos para lidar com a persist�ncia da rede (para n�o ter que treina-la novamente a cada execu��o)
 
