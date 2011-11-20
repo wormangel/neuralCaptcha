@@ -64,7 +64,6 @@ public class FileManager {
 		
 		// Pra cada diret�rio (correspondente a um caractere) no diret�rio de treinamento
 		for (String dirCaractere : diretoriosTreinamento.list()) {
-			System.out.println(dirCaractere);
 			if (dirCaractere.length() > 1){
 				continue;
 			}

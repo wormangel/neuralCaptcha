@@ -8,8 +8,8 @@ public class BitMapper {
 	
 	// Strings representando a sa�da desejada da rede para cada caractere
     // S�o 31 neur�nios de sa�da, um para cada caractere poss�vel, j� levando em conta as exclus�es (ver dadosAmostras.txt)
-    private static final String SAIDA_ESPERADA_A = "1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0";
-	private static final String SAIDA_ESPERADA_B = "0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0";
+    private static final String SAIDA_ESPERADA_A = "1;0";
+	private static final String SAIDA_ESPERADA_B = "0;1";
 	private static final String SAIDA_ESPERADA_C = "0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0";
 	private static final String SAIDA_ESPERADA_D = "0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0";
     private static final String SAIDA_ESPERADA_E = "0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0";
