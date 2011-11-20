@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import br.ufcg.neuralcaptcha.util.BitmapExtractor;
 import org.joone.engine.FullSynapse;
 import org.joone.engine.LinearLayer;
 import org.joone.engine.Monitor;
@@ -20,6 +21,9 @@ import org.joone.net.NeuralNet;
 
 import br.ufcg.neuralcaptcha.util.BitMapper;
 import br.ufcg.neuralcaptcha.util.FileManager;
+import sun.plugin.com.Utils;
+
+import javax.rmi.CORBA.Util;
 
 
 /**
@@ -143,7 +147,7 @@ public class NeuralCaptcha {
 		monitor.setLearning(true);
 
 		rede.go(true);
-		System.out.println("Treinamento acabou!. ï¿½ltimo RMSE="+ rede.getMonitor().getGlobalError());
+		System.out.println("Treinamento acabou!. ï¿½ltimo RMSE=" + rede.getMonitor().getGlobalError());
 	}
 
 	public void validaRede() throws IOException, InterruptedException {
@@ -221,8 +225,6 @@ public class NeuralCaptcha {
 		inputSynapse1.setInputFile(arquivoDeEntrada);
 		inputSynapse1.setName("input1");
 		inputSynapse1.setAdvancedColumnSelector(ADVANCED_COLUMN_SELECTOR);
-		inputSynapse1.setFirstRow(1);
-		inputSynapse1.setLastRow(TAMANHO_CAPTCHA); // 5 caracteres
 
 		// Coloca esta sinapse como entrada da camada de entrada
 		rede.getInputLayer().addInputSynapse(inputSynapse1);
@@ -242,8 +244,21 @@ public class NeuralCaptcha {
 		rede.go();
 		double[] resposta = outputSynapse1.getNextPattern();
 
-		return BitMapper.converteArrayDeBitsParaLetra(resposta);
+		return BitMapper.converteArrayDeBitsParaString(resposta);
 	}
+
+    /**
+     * Recebe o path para a imagem de um caractere previamente processada e realiza a identificação do mesmo
+     * @param pathImagemProcessada O caminho para a imagem do caractere (bitmap 1bpp)
+     * @return O caractere identificado pela RNA
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public String identificaCaractere(String pathImagemProcessada) throws IOException, InterruptedException{
+        int[][] entradaDaRede = new int[1][TAMANHO_CARACTERE_W * TAMANHO_CARACTERE_H];
+        entradaDaRede[0] = BitmapExtractor.extraiBitmap(pathImagemProcessada);
+		return identificaCaptcha(entradaDaRede);
+    }
 
 	public void adicionaListener(NeuralNetListener listener){
 		rede.addNeuralNetListener(listener);

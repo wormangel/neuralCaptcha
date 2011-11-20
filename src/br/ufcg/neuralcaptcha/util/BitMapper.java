@@ -119,6 +119,21 @@ public class BitMapper {
     	return str.toString();
 	}
 
+        /**
+     * Converte um double[] para String, separando os valores com ";"
+     * @param entrada o array de double
+     * @return uma String contendo os valores do array separados por ";"
+     */
+    public static String converteArrayDeBitsParaString(double[] entrada){
+		StringBuilder str = new StringBuilder();
+    	for(int i = 0; i < entrada.length; i++){
+    		str.append(String.valueOf(entrada[i]));
+    		str.append(";");
+    	}
+    	str.deleteCharAt(str.length()-1);
+    	return str.toString();
+	}
+
     /**
      * Obt�m uma String representando a sa�da desejada para um determinado caractere
      * @param caractere O caractere desejado

@@ -2,6 +2,7 @@ package test;
 
 import java.io.IOException;
 
+import br.ufcg.neuralcaptcha.util.FileManager;
 import org.joone.engine.Monitor;
 import org.joone.engine.NeuralNetEvent;
 import org.joone.engine.NeuralNetListener;
@@ -20,11 +21,11 @@ public class MockMain implements NeuralNetListener {
 		NeuralCaptcha rec = new NeuralCaptcha(this);
 		
 		rec.treinaRede();
+
+        System.out.println(rec.identificaCaractere(FileManager.DIRETORIO_TESTE + "a" + "\\" + "8842.bmp"));
 		
 		//rec.SalvarRede();
 		//rec.validaRede();
-		
-		//System.out.println(rec.identificaNumero("C:\\temp\\porFuncao\\validacao\\letras\\A\\3 (2).jpg"));;
 	}
 
 	public void cicleTerminated(NeuralNetEvent e) {
