@@ -2,6 +2,7 @@ package br.ufcg.neuralcaptcha.core;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Vector;
 
 import org.joone.engine.FullSynapse;
 import org.joone.engine.LinearLayer;
@@ -253,7 +254,17 @@ public class NeuralCaptcha {
 	}
 
     public void salvarRede() throws IOException {
+        // Armazena os listeners da rede pois estes terao que ser removidos para salvar
+        Vector<NeuralNetListener> listeners = rede.getListeners();
+        rede.removeAllListeners();
+
+        // Salva a rede
         FileManager.salvarRede(rede);
+
+        // Registra os listeners na rede novamente
+        for (NeuralNetListener listener : listeners){
+            rede.addNeuralNetListener(listener);
+        }
     }
 
     public void carregarRede() throws IOException, ClassNotFoundException {

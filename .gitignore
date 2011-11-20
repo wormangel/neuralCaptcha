@@ -11,3 +11,4 @@ res/error.txt
 res/current/captcha.gif
 res/current/final-captcha.bmp
 res/current/letters/*.bmp
+res/redeNeural.mlp
