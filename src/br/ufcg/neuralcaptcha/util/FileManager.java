@@ -75,10 +75,10 @@ public class FileManager {
 				// Converte para array de ints
 				int[] imagemEmBits = BitmapExtractor.extraiBitmap(dirComImagensDoCaractere + "/" + arquivoImagem);
 				// Converte para string e escreve no arquivo de entrada
-				writerInput.write(BitMapper.converteArrayDeBitsParaString(imagemEmBits) + "\n");
+				writerInput.write(BitMapper.converteArrayDeBitsParaString(imagemEmBits) + System.getProperty("line.separator"));
 				
 				// Escreve no arquivo de sa�da esperada a linha correspondente ao caractere
-				writerOutput.write(BitMapper.obtemSaidaDesejada(dirCaractere) + "\n");
+				writerOutput.write(BitMapper.obtemSaidaDesejada(dirCaractere) + System.getProperty("line.separator"));
 			}
 		}
 		
@@ -118,10 +118,10 @@ public class FileManager {
 				// Converte para array de ints
 				int[] imagemEmBits = BitmapExtractor.extraiBitmap(dirComImagensDoCaractere + "\\" + arquivoImagem);
 				// Converte para string e escreve no arquivo de entrada
-				writerInput.write(BitMapper.converteArrayDeBitsParaString(imagemEmBits) + "\n");
+				writerInput.write(BitMapper.converteArrayDeBitsParaString(imagemEmBits) + System.getProperty("line.separator"));
 				
 				// Escreve no arquivo de sa�da esperada a linha correspondente ao caractere
-				writerOutput.write(BitMapper.obtemSaidaDesejada(dirCaractere) + "\n");
+				writerOutput.write(BitMapper.obtemSaidaDesejada(dirCaractere) + System.getProperty("line.separator"));
 			}
 		}
 		
