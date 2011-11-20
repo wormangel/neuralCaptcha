@@ -5,3 +5,7 @@ bin/
 *.eml
 .idea
 .settings
+res/trainingInput.txt
+res/trainingOutput.txt
+res/error.txt
+
