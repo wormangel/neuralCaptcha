@@ -1,4 +1,4 @@
-package ui;
+package br.ufcg.neuralcaptcha.ui;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;

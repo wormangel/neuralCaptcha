@@ -1,8 +1,10 @@
 package br.ufcg.neuralcaptcha.util;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class FileManager {
 	
@@ -126,6 +128,18 @@ public class FileManager {
 		
 		writerInput.close();
 		writerOutput.close();		
+	}
+
+	public static String downloadSample() throws IOException, InterruptedException {
+		Process p = Runtime.getRuntime().exec("ruby src/downloader.rb");
+		p.waitFor();
+		BufferedReader buf = new BufferedReader(new InputStreamReader(p.getInputStream()));
+		String line = "";
+		while ((line = buf.readLine()) != null) {
+			System.out.println(line);
+		}
+		
+		return "res/current/final-captcha.bmp";
 	}
 
 }

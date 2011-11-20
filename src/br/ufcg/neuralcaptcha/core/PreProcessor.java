@@ -1,8 +1,10 @@
 package br.ufcg.neuralcaptcha.core;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 import javax.imageio.ImageIO;
 
@@ -12,7 +14,15 @@ import br.ufcg.neuralcaptcha.util.BitmapExtractor;
 public class PreProcessor {
 
 	public static int[][] processaImagem(String path) throws IOException, InterruptedException{
-        // Este � o captcha original
+		Process p = Runtime.getRuntime().exec("ruby src/processor.rb");
+		p.waitFor();
+		BufferedReader buf = new BufferedReader(new InputStreamReader(p.getInputStream()));
+		String line = "";
+		while ((line = buf.readLine()) != null) {
+			System.out.println(line);
+		}
+		
+		// Este � o captcha original
         BufferedImage img = ImageIO.read(new File(path));
 
         // Remove excesso da imagem

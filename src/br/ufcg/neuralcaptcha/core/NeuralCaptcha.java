@@ -1,11 +1,18 @@
 package br.ufcg.neuralcaptcha.core;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 
 import org.joone.engine.FullSynapse;
 import org.joone.engine.LinearLayer;
@@ -139,7 +146,7 @@ public class NeuralCaptcha {
 		Monitor monitor = rede.getMonitor();
 		monitor.setLearningRate(0.8);
 		monitor.setMomentum(0.3);
-		monitor.setTrainingPatterns(10); // TODO Quantidade de padroes de treinamento
+		monitor.setTrainingPatterns(10); // TODO Quantidade de linhas no arquivo de entrada de treinamento
 		monitor.setTotCicles(10);
 		monitor.setLearning(true);
 
@@ -191,6 +198,16 @@ public class NeuralCaptcha {
 		System.out.println("Network stopped. Last RMSE="+ rede.getMonitor().getGlobalError());
 	}
 
+	public String identificaCaptcha() {
+		ScriptEngine jruby = new ScriptEngineManager().getEngineByName("jruby");
+		try {
+			jruby.eval(new BufferedReader(new FileReader("downloader.rb")));
+			return "";
+		} catch (Exception e) {
+			return "ERROR!!!";
+		}
+	}
+	
 	/**
 	 * Recebe uma string correspondente ao caminho no disco para a imagem a ser identificada.
 	 * A imagem � pr�-processada para obter a entrada da rede neural e submetida � mesma em seguida.
