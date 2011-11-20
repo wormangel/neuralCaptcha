@@ -103,7 +103,7 @@ public class NeuralCaptcha {
 		// Prepara a sa�da para o treinamento da rede
 		FileInputSynapse desiredSynapse1 = new FileInputSynapse();
 		desiredSynapse1.setInputFile(new File(FileManager.SAIDA_TREINAMENTO));
-		desiredSynapse1.setAdvancedColumnSelector("1,31");
+		desiredSynapse1.setAdvancedColumnSelector("1-31");
 		//		desiredSynapse1.setFirstRow(1);
 		//		desiredSynapse1.setLastRow(10); // TODO Quantidade de padroes de treinamento
 
