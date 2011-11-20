@@ -1,7 +1,5 @@
 package br.ufcg.neuralcaptcha.util;
 
-import br.ufcg.neuralcaptcha.core.NeuralCaptcha;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -98,8 +96,8 @@ public class BitMapper {
     }
 
     /**
-     * Array interno que enumera todas as respostas possíveis da rede.
-     * O caractere identificado pela rede corresponde ao caractere na posição deste array igual à posição do valor mais
+     * Array interno que enumera todas as respostas possï¿½veis da rede.
+     * O caractere identificado pela rede corresponde ao caractere na posiï¿½ï¿½o deste array igual ï¿½ posiï¿½ï¿½o do valor mais
      * alto no array retornado pela rede neural.
      */
     private static final String[] RESPOSTAS_DA_REDE;
@@ -143,16 +141,16 @@ public class BitMapper {
     /**
      * Traduz a resposta da rede neural para o caractere identificado pela mesma
      * @param resposta A resposta obtida pela rede neural
-     * @return O caractere que foi identificado como mais provável pela rede
+     * @return O caractere que foi identificado como mais provï¿½vel pela rede
      */
     public static String traduzRespostaDaRede(double[] resposta){
         return RESPOSTAS_DA_REDE[obtemIndiceComMaiorValorNoArray(resposta)];
     }
 
     /**
-     * Recebe um double[] e retorna o índice do array cujo valor é o maior dentro do array
+     * Recebe um double[] e retorna o ï¿½ndice do array cujo valor ï¿½ o maior dentro do array
      * @param array O array de double
-     * @return A posição do maior elemento do array (começando em 0)
+     * @return A posiï¿½ï¿½o do maior elemento do array (comeï¿½ando em 0)
      */
     private static int obtemIndiceComMaiorValorNoArray(double[] array){
         int bigger = 0;

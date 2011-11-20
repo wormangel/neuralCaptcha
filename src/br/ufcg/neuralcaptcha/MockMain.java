@@ -1,20 +1,19 @@
-package test;
+package br.ufcg.neuralcaptcha;
 
 import java.io.IOException;
 
-import br.ufcg.neuralcaptcha.util.FileManager;
 import org.joone.engine.Monitor;
 import org.joone.engine.NeuralNetEvent;
 import org.joone.engine.NeuralNetListener;
 
 import br.ufcg.neuralcaptcha.core.NeuralCaptcha;
-import br.ufcg.neuralcaptcha.core.PreProcessor;
+import br.ufcg.neuralcaptcha.util.FileManager;
 
 
 public class MockMain implements NeuralNetListener {
 
 	public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException {
-		MockMain mock = new MockMain();
+		new MockMain();
 	}
 	
 	public MockMain() throws IOException, InterruptedException, ClassNotFoundException{

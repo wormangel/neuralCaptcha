@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import br.ufcg.neuralcaptcha.core.NeuralCaptcha;
-
 public class FileManager {
 	
 	// Diret�rios contendo as imagens
