@@ -14,6 +14,7 @@ import org.joone.engine.NeuralNetListener;
 import org.joone.engine.SigmoidLayer;
 import org.joone.engine.learning.TeachingSynapse;
 import org.joone.io.FileInputSynapse;
+import org.joone.io.FileOutputSynapse;
 import org.joone.io.MemoryOutputSynapse;
 import org.joone.net.NeuralNet;
 
@@ -33,11 +34,13 @@ public class NeuralCaptcha {
 
 	public final static int TAMANHO_CAPTCHA = 5;
 	public final static int TAMANHO_CARACTERE_W = 28, TAMANHO_CARACTERE_H = 45;
-	private final int NEURONIOS_DE_SAIDA = 31; // 26 letras + 10 d�gitos - 5 exclus�es
+	private final int NEURONIOS_DE_SAIDA = 2; // 26 letras + 10 d�gitos - 5 exclus�es
 	private final String ADVANCED_COLUMN_SELECTOR = "1-" + String.valueOf(TAMANHO_CARACTERE_W * TAMANHO_CARACTERE_H);
 
 	private NeuralNet rede;
-	private Monitor monitor;
+	private LinearLayer input;
+	private SigmoidLayer hidden;
+	private SigmoidLayer output;
 	
 	public NeuralCaptcha() { }
 	
@@ -59,26 +62,25 @@ public class NeuralCaptcha {
 	}
 
 	public void inicializaRede() {
-		// Rede para letras
-
+		// cria rede
+		rede = new NeuralNet();
+		
 		// Camadas da rede
-		LinearLayer input = new LinearLayer();
-		SigmoidLayer hidden = new SigmoidLayer();
-		SigmoidLayer output = new SigmoidLayer();
-
-		// Tamanhos
-		// Tamanho da camada de entrada
-		input.setRows(TAMANHO_CARACTERE_W * TAMANHO_CARACTERE_H); // N�mero de pixels de cada caractere
-
-		// Tamanho da camada escondida - Configur�vel, altera o desempenho
-		hidden.setRows(100);
-
-		// Tamanho da camada de sa�da - n�mero de respostas poss�veis da rede (n�mero de caracteres reconhec�veis)
-		output.setRows(NEURONIOS_DE_SAIDA); //
+		input = new LinearLayer();
+		hidden = new SigmoidLayer();
+		output = new SigmoidLayer();
 
 		input.setLayerName("inputLayer");
 		hidden.setLayerName("hiddenLayer");
 		output.setLayerName("outputLayer");
+
+		// Tamanhos
+		// Tamanho da camada de entrada
+		input.setRows(TAMANHO_CARACTERE_W * TAMANHO_CARACTERE_H); // N�mero de pixels de cada caractere
+		// Tamanho da camada escondida - Configur�vel, altera o desempenho
+		hidden.setRows(100);
+		// Tamanho da camada de sa�da - n�mero de respostas poss�veis da rede (n�mero de caracteres reconhec�veis)
+		output.setRows(NEURONIOS_DE_SAIDA); //
 
 		// Sinapses
 		FullSynapse synapse_IH = new FullSynapse(); /* input -> hidden conn. */
@@ -91,61 +93,54 @@ public class NeuralCaptcha {
 		// Conecta a camada escondida � camada de sa�da
 		hidden.addOutputSynapse(synapse_HO);
 		output.addInputSynapse(synapse_HO);
-		
-		// get the monitor object to train or feed forward
-		monitor = new Monitor();
-		
-		
-		input.setMonitor(monitor);
-		hidden.setMonitor(monitor);
-		output.setMonitor(monitor);
-
-		// Adiciona as camadas criadas � rede neural
-		rede = new NeuralNet();
-
-		rede.addLayer(input, NeuralNet.INPUT_LAYER);
-		rede.addLayer(hidden, NeuralNet.HIDDEN_LAYER);
-		rede.addLayer(output, NeuralNet.OUTPUT_LAYER);
 	}
 
 	public void treinaRede() throws IOException, InterruptedException {
-		// set the monitor parameters
-		monitor.setLearningRate(0.8);
-		monitor.setMomentum(0.3);
-		monitor.setTrainingPatterns(10); // TODO Quantidade de padroes de treinamento
-		monitor.setTotCicles(2000);
-		monitor.setLearning(true);
-
 		// Prepara a entrada para o treinamento da rede
 		FileManager.geraArquivosDeTreinamento();
 
 		FileInputSynapse inputSynapse1 = new FileInputSynapse();
-
 		inputSynapse1.setInputFile(new File(FileManager.ENTRADA_TREINAMENTO));
-		inputSynapse1.setName("input1");
 		inputSynapse1.setAdvancedColumnSelector(ADVANCED_COLUMN_SELECTOR);
-		inputSynapse1.setFirstRow(1);
-		inputSynapse1.setLastRow(10); // TODO Quantidade de padroes de treinamento
+//		inputSynapse1.setFirstRow(1);
+//		inputSynapse1.setLastRow(10); // TODO Quantidade de padroes de treinamento
 
 		// Coloca esta sinapse como entrada da camada de entrada
-		rede.getInputLayer().addInputSynapse(inputSynapse1);
+		input.addInputSynapse(inputSynapse1);
+
+		TeachingSynapse trainer = new TeachingSynapse();
 
 		// Prepara a sa�da para o treinamento da rede
 		FileInputSynapse desiredSynapse1 = new FileInputSynapse();
-
 		desiredSynapse1.setInputFile(new File(FileManager.SAIDA_TREINAMENTO));
-		desiredSynapse1.setName("desired1");
-		desiredSynapse1.setAdvancedColumnSelector("1-2");
-		desiredSynapse1.setFirstRow(1);
-		desiredSynapse1.setLastRow(10); // TODO Quantidade de padroes de treinamento
+		desiredSynapse1.setAdvancedColumnSelector("1,2");
+//		desiredSynapse1.setFirstRow(1);
+//		desiredSynapse1.setLastRow(10); // TODO Quantidade de padroes de treinamento
 
-		TeachingSynapse trainer = new TeachingSynapse();
 		trainer.setDesired(desiredSynapse1);
-		trainer.setMonitor(monitor);
 
+		/* Creates the error output file */
+        FileOutputSynapse error = new FileOutputSynapse();
+        error.setFileName("res/error.txt");
+        //error.setBuffered(false);
+        trainer.addResultSynapse(error);
+        
 		// Coloca esta sinapse como sa�da da camada de sa�da
+		output.addOutputSynapse(trainer);
+
+		// Adiciona as camadas criadas � rede neural
+		rede.addLayer(input, NeuralNet.INPUT_LAYER);
+		rede.addLayer(hidden, NeuralNet.HIDDEN_LAYER);
+		rede.addLayer(output, NeuralNet.OUTPUT_LAYER);
 		rede.setTeacher(trainer);
-		rede.getOutputLayer().addOutputSynapse(trainer);
+
+		// configure monitor parameters
+		Monitor monitor = rede.getMonitor();
+		monitor.setLearningRate(0.8);
+		monitor.setMomentum(0.3);
+		monitor.setTrainingPatterns(10); // TODO Quantidade de padroes de treinamento
+		monitor.setTotCicles(10);
+		monitor.setLearning(true);
 
 		rede.go(true);
 		System.out.println("Treinamento acabou!. �ltimo RMSE="+ rede.getMonitor().getGlobalError());
