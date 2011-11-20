@@ -38,8 +38,8 @@ public class NeuralCaptcha {
 
 	public final static int TAMANHO_CAPTCHA = 5;
 	public final static int TAMANHO_CARACTERE_W = 28, TAMANHO_CARACTERE_H = 45;
-	private final int NEURONIOS_DE_SAIDA = 2; // 26 letras + 10 d�gitos - 5 exclus�es
-	private final String ADVANCED_COLUMN_SELECTOR = "1-" + String.valueOf(TAMANHO_CARACTERE_W * TAMANHO_CARACTERE_H);
+	public final static int NEURONIOS_DE_SAIDA = 2; // 26 letras + 10 d�gitos - 5 exclus�es
+	private final static String ADVANCED_COLUMN_SELECTOR = "1-" + String.valueOf(TAMANHO_CARACTERE_W * TAMANHO_CARACTERE_H);
 
 	private NeuralNet rede;
 	private LinearLayer input;
@@ -244,7 +244,7 @@ public class NeuralCaptcha {
 		rede.go();
 		double[] resposta = outputSynapse1.getNextPattern();
 
-		return BitMapper.converteArrayDeBitsParaString(resposta);
+		return BitMapper.traduzRespostaDaRede(resposta);
 	}
 
     /**

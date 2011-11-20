@@ -1,5 +1,7 @@
 package br.ufcg.neuralcaptcha.util;
 
+import br.ufcg.neuralcaptcha.core.NeuralCaptcha;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -7,6 +9,7 @@ import java.util.Map;
 public class BitMapper {
 	
 	// Strings representando a saï¿½da desejada da rede para cada caractere
+    
     // Sï¿½o 31 neurï¿½nios de saï¿½da, um para cada caractere possï¿½vel, jï¿½ levando em conta as exclusï¿½es (ver dadosAmostras.txt)
     private static final String SAIDA_ESPERADA_A = "1;0";
 	private static final String SAIDA_ESPERADA_B = "0;1";
@@ -94,15 +97,17 @@ public class BitMapper {
         SAIDAS_DESEJADAS = Collections.unmodifiableMap(tmp);
     }
 
-    public static String converteArrayDeBitsParaLetra(double[] resposta) {
-    	for (int i = 0; i<= resposta.length; i++){
-    		if (resposta[i] != 0) {
-    			int posicaoAscii = i + 65;
-    			return String.valueOf( (char) posicaoAscii );
-    		}
-    	}
-		return null;
-	}
+    /**
+     * Array interno que enumera todas as respostas possíveis da rede.
+     * O caractere identificado pela rede corresponde ao caractere na posição deste array igual à posição do valor mais
+     * alto no array retornado pela rede neural.
+     */
+    private static final String[] RESPOSTAS_DA_REDE;
+    static {
+        String[] tmp = {"A","B","C","D","E","F","G","H","J","K","L","M","N","P","Q","R","S","T","U",
+                "W","X","Y","Z","2","3","4","5","6","7","8","9"};
+        RESPOSTAS_DA_REDE = tmp;
+    }
 
     /**
      * Converte um int[] para String, separando os valores com ";"
@@ -133,6 +138,31 @@ public class BitMapper {
     	str.deleteCharAt(str.length()-1);
     	return str.toString();
 	}
+
+
+    /**
+     * Traduz a resposta da rede neural para o caractere identificado pela mesma
+     * @param resposta A resposta obtida pela rede neural
+     * @return O caractere que foi identificado como mais provável pela rede
+     */
+    public static String traduzRespostaDaRede(double[] resposta){
+        return RESPOSTAS_DA_REDE[obtemIndiceComMaiorValorNoArray(resposta)];
+    }
+
+    /**
+     * Recebe um double[] e retorna o índice do array cujo valor é o maior dentro do array
+     * @param array O array de double
+     * @return A posição do maior elemento do array (começando em 0)
+     */
+    private static int obtemIndiceComMaiorValorNoArray(double[] array){
+        int bigger = 0;
+        for(int i = 1; i < array.length; i++){
+            if (array[i] > array[0]){
+                bigger = i;
+            }
+        }
+        return bigger;
+    }
 
     /**
      * Obtï¿½m uma String representando a saï¿½da desejada para um determinado caractere
