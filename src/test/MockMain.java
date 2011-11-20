@@ -19,10 +19,9 @@ public class MockMain implements NeuralNetListener {
 	
 	public MockMain() throws IOException, InterruptedException, ClassNotFoundException{
 		NeuralCaptcha rec = new NeuralCaptcha(this);
-		
 		rec.treinaRede();
-
-        System.out.println(rec.identificaCaractere(FileManager.DIRETORIO_TESTE + "a" + "\\" + "8842.bmp"));
+        
+        System.out.println("Resultado: " + rec.identificaCaractere(FileManager.DIRETORIO_TESTE + "a" + "\\" + "8842.bmp"));
 		
 		//rec.SalvarRede();
 		//rec.validaRede();

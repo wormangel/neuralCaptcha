@@ -33,8 +33,8 @@ public class FileManager {
     	FileWriter writer = new FileWriter(arquivoDeEntrada);
     	writer.flush();
     	StringBuilder str = new StringBuilder();
-    	for(int i = 0; i < NeuralCaptcha.TAMANHO_CAPTCHA; i++){
-            for (int j = 0; j < NeuralCaptcha.TAMANHO_CARACTERE_W * NeuralCaptcha.TAMANHO_CARACTERE_H; j++){
+    	for(int i = 0; i < entradaDaRede.length; i++){
+            for (int j = 0; j < entradaDaRede[i].length; j++){
                 str.append(entradaDaRede[i][j]);
     		    str.append(";");
             }
