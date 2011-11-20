@@ -25,7 +25,7 @@ public class FileManager {
     public static final String ENTRADA_TESTE = "res/testingInput.txt";
 	public static final String SAIDA_TESTE = "res/testingOutput.txt";
 
-    // Persistência da rede
+    // Persistï¿½ncia da rede
     public static final String ARQUIVO_REDE_PERSIST = "res/redeNeural.mlp";
 	
 	/**
@@ -146,10 +146,10 @@ public class FileManager {
 			System.out.println(line);
 		}
 		
-		return "res/current/final-captcha.bmp";
+		return "res/current/captcha.gif";
 	}
 
-    // Persistência da rede
+    // Persistï¿½ncia da rede
 
     /**
 	 * Salva a rede neural em disco.

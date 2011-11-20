@@ -28,7 +28,7 @@ public class UI {
 	public UI(Display display) {
 		shell = new Shell(display);
 		shell.setText("       Projeto de IA");
-		shell.setSize(170, 210);
+		shell.setSize(230, 280);
 
 		configureLayout(shell);
 		addElementsOnShell();
@@ -45,17 +45,18 @@ public class UI {
 	private void configureLayout(Shell shell) {
 		RowLayout rowLayout = new RowLayout(SWT.VERTICAL);
 		rowLayout.marginTop = 10;
-        rowLayout.marginLeft = 12;
+        rowLayout.marginLeft = 10;
         shell.setLayout(rowLayout);
 	}
 
 	private void addElementsOnShell() {
 		final Label label = new Label(shell, SWT.NONE);
-		label.setLayoutData(new RowData(140, 45));
+		label.setLayoutData(new RowData(205, 71));
 		label.setText("Click to get captcha!");
 
 		Button getCaptchaButton = new Button(shell, SWT.PUSH);
 		getCaptchaButton.setText("Get captcha!");
+		getCaptchaButton.setLayoutData(new RowData(205, 30));
 		getCaptchaButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent arg0) {
 				Image image;
@@ -71,8 +72,41 @@ public class UI {
 			}
 		});
 
+		Button loadNetworkButton = new Button(shell, SWT.PUSH);
+		loadNetworkButton.setText("Load network");
+		loadNetworkButton.setLayoutData(new RowData(205, 30));
+		loadNetworkButton.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent arg0) {
+				try {
+					network.carregarRede();
+				} catch (Exception e) {
+					e.printStackTrace();
+					inputBox.setText("ERROR!!!");
+				}
+			}
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+			}
+		});
+		
+		Button trainButton = new Button(shell, SWT.PUSH);
+		trainButton.setText("Train network");
+		trainButton.setLayoutData(new RowData(205, 30));
+		trainButton.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent arg0) {
+				try {
+					network.treinaRede();
+				} catch (Exception e) {
+					e.printStackTrace();
+					inputBox.setText("ERROR!!!");
+				}
+			}
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+			}
+		});
+
 		Button recognizeButton = new Button(shell, SWT.PUSH);
 		recognizeButton.setText("Recognize!");
+		recognizeButton.setLayoutData(new RowData(205, 30));
 		recognizeButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent arg0) {
 				try {
@@ -87,6 +121,7 @@ public class UI {
 		});
 
 		inputBox = new Text(shell, SWT.BORDER);
+		inputBox.setLayoutData(new RowData(195, 18));
 	}
 
 

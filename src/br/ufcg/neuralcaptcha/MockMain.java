@@ -7,7 +7,6 @@ import org.joone.engine.NeuralNetEvent;
 import org.joone.engine.NeuralNetListener;
 
 import br.ufcg.neuralcaptcha.core.NeuralCaptcha;
-import br.ufcg.neuralcaptcha.util.FileManager;
 
 
 public class MockMain implements NeuralNetListener {
@@ -39,7 +38,7 @@ public class MockMain implements NeuralNetListener {
 	}
 
 	public void netStarted(NeuralNetEvent e) {
-		System.out.println("Rede começou!");
+		System.out.println("Rede comeï¿½ou!");
 		
 	}
 

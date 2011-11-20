@@ -1,11 +1,7 @@
 package br.ufcg.neuralcaptcha.core;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 
 import org.joone.engine.FullSynapse;
 import org.joone.engine.LinearLayer;
@@ -43,7 +39,9 @@ public class NeuralCaptcha {
 	private SigmoidLayer hidden;
 	private SigmoidLayer output;
 
-	public NeuralCaptcha() { }
+	public NeuralCaptcha() { 
+		inicializaRede();
+	}
 
 	/**
 	 * Cria uma inst�ncia do reconhecedor e se registra como observador dos eventos da rede neural.
