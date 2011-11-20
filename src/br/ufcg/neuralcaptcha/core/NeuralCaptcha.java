@@ -35,7 +35,7 @@ public class NeuralCaptcha {
 
 	public final static int TAMANHO_CAPTCHA = 5;
 	public final static int TAMANHO_CARACTERE_W = 28, TAMANHO_CARACTERE_H = 45;
-	public final static int NEURONIOS_DE_SAIDA = 2; // 26 letras + 10 d�gitos - 5 exclus�es
+	public final static int NEURONIOS_DE_SAIDA = 31; // 26 letras + 10 d�gitos - 5 exclus�es
 	private final static String ADVANCED_COLUMN_SELECTOR = "1-" + String.valueOf(TAMANHO_CARACTERE_W * TAMANHO_CARACTERE_H);
 
 	private NeuralNet rede;
