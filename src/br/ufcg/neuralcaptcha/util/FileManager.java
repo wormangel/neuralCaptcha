@@ -10,8 +10,8 @@ public class FileManager {
 	
 	// Diret�rios contendo as imagens
 	public static final String DIRETORIO_TREINAMENTO = "res/training/";
-	public static final String DIRETORIO_VALIDACAO = "validation/training/";
-    public static final String DIRETORIO_TESTE = "validation/testing/";
+	public static final String DIRETORIO_VALIDACAO = "res/validation/";
+    public static final String DIRETORIO_TESTE = "res/testing/";
 	
 	// Treinamento
 	public static final String ENTRADA_TREINAMENTO = "res/trainingInput.txt";
