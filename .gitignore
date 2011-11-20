@@ -8,4 +8,6 @@ bin/
 res/trainingInput.txt
 res/trainingOutput.txt
 res/error.txt
-
+res/current/captcha.gif
+res/current/final-captcha.bmp
+res/current/letters/*.bmp

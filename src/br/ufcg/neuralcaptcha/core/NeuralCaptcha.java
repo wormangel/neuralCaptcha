@@ -1,18 +1,11 @@
 package br.ufcg.neuralcaptcha.core;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 
 import org.joone.engine.FullSynapse;
 import org.joone.engine.LinearLayer;
@@ -49,9 +42,9 @@ public class NeuralCaptcha {
 	private LinearLayer input;
 	private SigmoidLayer hidden;
 	private SigmoidLayer output;
-	
+
 	public NeuralCaptcha() { }
-	
+
 	/**
 	 * Cria uma inst�ncia do reconhecedor e se registra como observador dos eventos da rede neural.
 	 */
@@ -72,7 +65,7 @@ public class NeuralCaptcha {
 	public void inicializaRede() {
 		// cria rede
 		rede = new NeuralNet();
-		
+
 		// Camadas da rede
 		input = new LinearLayer();
 		hidden = new SigmoidLayer();
@@ -110,8 +103,8 @@ public class NeuralCaptcha {
 		FileInputSynapse inputSynapse1 = new FileInputSynapse();
 		inputSynapse1.setInputFile(new File(FileManager.ENTRADA_TREINAMENTO));
 		inputSynapse1.setAdvancedColumnSelector(ADVANCED_COLUMN_SELECTOR);
-//		inputSynapse1.setFirstRow(1);
-//		inputSynapse1.setLastRow(10); // TODO Quantidade de padroes de treinamento
+		//		inputSynapse1.setFirstRow(1);
+		//		inputSynapse1.setLastRow(10); // TODO Quantidade de padroes de treinamento
 
 		// Coloca esta sinapse como entrada da camada de entrada
 		input.addInputSynapse(inputSynapse1);
@@ -122,17 +115,17 @@ public class NeuralCaptcha {
 		FileInputSynapse desiredSynapse1 = new FileInputSynapse();
 		desiredSynapse1.setInputFile(new File(FileManager.SAIDA_TREINAMENTO));
 		desiredSynapse1.setAdvancedColumnSelector("1,2");
-//		desiredSynapse1.setFirstRow(1);
-//		desiredSynapse1.setLastRow(10); // TODO Quantidade de padroes de treinamento
+		//		desiredSynapse1.setFirstRow(1);
+		//		desiredSynapse1.setLastRow(10); // TODO Quantidade de padroes de treinamento
 
 		trainer.setDesired(desiredSynapse1);
 
 		/* Creates the error output file */
-        FileOutputSynapse error = new FileOutputSynapse();
-        error.setFileName("res/error.txt");
-        //error.setBuffered(false);
-        trainer.addResultSynapse(error);
-        
+		FileOutputSynapse error = new FileOutputSynapse();
+		error.setFileName("res/error.txt");
+		//error.setBuffered(false);
+		trainer.addResultSynapse(error);
+
 		// Coloca esta sinapse como sa�da da camada de sa�da
 		output.addOutputSynapse(trainer);
 
@@ -198,16 +191,6 @@ public class NeuralCaptcha {
 		System.out.println("Network stopped. Last RMSE="+ rede.getMonitor().getGlobalError());
 	}
 
-	public String identificaCaptcha() {
-		ScriptEngine jruby = new ScriptEngineManager().getEngineByName("jruby");
-		try {
-			jruby.eval(new BufferedReader(new FileReader("downloader.rb")));
-			return "";
-		} catch (Exception e) {
-			return "ERROR!!!";
-		}
-	}
-	
 	/**
 	 * Recebe uma string correspondente ao caminho no disco para a imagem a ser identificada.
 	 * A imagem � pr�-processada para obter a entrada da rede neural e submetida � mesma em seguida.
@@ -216,9 +199,13 @@ public class NeuralCaptcha {
 	 * @throws InterruptedException 
 	 * @throws IOException 
 	 */
-	public String identificaCaptcha(String pathImagemNaoTratada) throws IOException, InterruptedException {
-		int[][] entradaDaRede = PreProcessor.processaImagem(pathImagemNaoTratada);
-		return identificaCaptcha(entradaDaRede);
+	public String identificaCaptcha() throws IOException, InterruptedException {
+		PreProcessor.processaImagem();
+		String output = "";
+		for (int i = 0; i < NeuralCaptcha.TAMANHO_CAPTCHA; i++){
+			output += identificaCaractere(FileManager.DIRETORIO_LIVE_LETRAS + i + ".bmp");
+		}
+		return output;
 	}
 
 	/**
@@ -261,18 +248,18 @@ public class NeuralCaptcha {
 		return BitMapper.traduzRespostaDaRede(resposta);
 	}
 
-    /**
-     * Recebe o path para a imagem de um caractere previamente processada e realiza a identifica��o do mesmo
-     * @param pathImagemProcessada O caminho para a imagem do caractere (bitmap 1bpp)
-     * @return O caractere identificado pela RNA
-     * @throws IOException
-     * @throws InterruptedException
-     */
-    public String identificaCaractere(String pathImagemProcessada) throws IOException, InterruptedException{
-        int[][] entradaDaRede = new int[1][TAMANHO_CARACTERE_W * TAMANHO_CARACTERE_H];
-        entradaDaRede[0] = BitmapExtractor.extraiBitmap(pathImagemProcessada);
+	/**
+	 * Recebe o path para a imagem de um caractere previamente processada e realiza a identifica��o do mesmo
+	 * @param pathImagemProcessada O caminho para a imagem do caractere (bitmap 1bpp)
+	 * @return O caractere identificado pela RNA
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	public String identificaCaractere(String pathImagemProcessada) throws IOException, InterruptedException{
+		int[][] entradaDaRede = new int[1][TAMANHO_CARACTERE_W * TAMANHO_CARACTERE_H];
+		entradaDaRede[0] = BitmapExtractor.extraiBitmap(pathImagemProcessada);
 		return identificaCaptcha(entradaDaRede);
-    }
+	}
 
 	public void adicionaListener(NeuralNetListener listener){
 		rede.addNeuralNetListener(listener);

@@ -75,9 +75,9 @@ public class UI {
 		recognizeButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent arg0) {
 				try {
-					// network.identificaCaptcha();
-					inputBox.setText("teste");
+					inputBox.setText(network.identificaCaptcha());
 				} catch (Exception e) {
+					e.printStackTrace();
 					inputBox.setText("ERROR!!!");
 				}
 			}

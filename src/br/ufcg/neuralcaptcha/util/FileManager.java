@@ -12,6 +12,8 @@ public class FileManager {
 	public static final String DIRETORIO_TREINAMENTO = "res/training/";
 	public static final String DIRETORIO_VALIDACAO = "res/validation/";
     public static final String DIRETORIO_TESTE = "res/testing/";
+    public static final String DIRETORIO_LIVE = "res/current/";
+    public static final String DIRETORIO_LIVE_LETRAS = "res/current/letters/";
 	
 	// Treinamento
 	public static final String ENTRADA_TREINAMENTO = "res/trainingInput.txt";
