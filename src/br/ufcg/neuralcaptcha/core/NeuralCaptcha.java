@@ -105,7 +105,7 @@ public class NeuralCaptcha {
 		// Prepara a sa�da para o treinamento da rede
 		FileInputSynapse desiredSynapse1 = new FileInputSynapse();
 		desiredSynapse1.setInputFile(new File(FileManager.SAIDA_TREINAMENTO));
-		desiredSynapse1.setAdvancedColumnSelector("1,2");
+		desiredSynapse1.setAdvancedColumnSelector("1,31");
 		//		desiredSynapse1.setFirstRow(1);
 		//		desiredSynapse1.setLastRow(10); // TODO Quantidade de padroes de treinamento
 
@@ -130,7 +130,7 @@ public class NeuralCaptcha {
 		Monitor monitor = rede.getMonitor();
 		monitor.setLearningRate(0.8);
 		monitor.setMomentum(0.3);
-		monitor.setTrainingPatterns(10); // TODO Quantidade de linhas no arquivo de entrada de treinamento
+		monitor.setTrainingPatterns(1435); // TODO Quantidade de linhas no arquivo de entrada de treinamento
 		monitor.setTotCicles(10);
 		monitor.setLearning(true);
 
