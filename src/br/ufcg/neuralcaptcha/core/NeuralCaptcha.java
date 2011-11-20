@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import br.ufcg.neuralcaptcha.util.BitmapExtractor;
 import org.joone.engine.FullSynapse;
 import org.joone.engine.LinearLayer;
 import org.joone.engine.Monitor;
@@ -20,10 +19,8 @@ import org.joone.io.MemoryOutputSynapse;
 import org.joone.net.NeuralNet;
 
 import br.ufcg.neuralcaptcha.util.BitMapper;
+import br.ufcg.neuralcaptcha.util.BitmapExtractor;
 import br.ufcg.neuralcaptcha.util.FileManager;
-import sun.plugin.com.Utils;
-
-import javax.rmi.CORBA.Util;
 
 
 /**
@@ -248,7 +245,7 @@ public class NeuralCaptcha {
 	}
 
     /**
-     * Recebe o path para a imagem de um caractere previamente processada e realiza a identificação do mesmo
+     * Recebe o path para a imagem de um caractere previamente processada e realiza a identificaï¿½ï¿½o do mesmo
      * @param pathImagemProcessada O caminho para a imagem do caractere (bitmap 1bpp)
      * @return O caractere identificado pela RNA
      * @throws IOException
