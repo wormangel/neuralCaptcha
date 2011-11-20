@@ -95,12 +95,6 @@ public class NeuralCaptcha {
 		// get the monitor object to train or feed forward
 		monitor = new Monitor();
 		
-		// set the monitor parameters
-		monitor.setLearningRate(0.8);
-		monitor.setMomentum(0.3);
-		monitor.setTrainingPatterns(54); // TODO Quantidade de padroes de treinamento
-		monitor.setTotCicles(150);
-		monitor.setLearning(true);
 		
 		input.setMonitor(monitor);
 		hidden.setMonitor(monitor);
@@ -115,6 +109,13 @@ public class NeuralCaptcha {
 	}
 
 	public void treinaRede() throws IOException, InterruptedException {
+		// set the monitor parameters
+		monitor.setLearningRate(0.8);
+		monitor.setMomentum(0.3);
+		monitor.setTrainingPatterns(10); // TODO Quantidade de padroes de treinamento
+		monitor.setTotCicles(2000);
+		monitor.setLearning(true);
+
 		// Prepara a entrada para o treinamento da rede
 		FileManager.geraArquivosDeTreinamento();
 
