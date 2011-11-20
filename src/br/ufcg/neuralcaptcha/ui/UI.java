@@ -1,4 +1,4 @@
-package br.ufcg.neuralcaptcha.util;
+package br.ufcg.neuralcaptcha.ui;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import br.ufcg.neuralcaptcha.core.NeuralCaptcha;
+import br.ufcg.neuralcaptcha.util.FileManager;
 
 public class UI {
 
