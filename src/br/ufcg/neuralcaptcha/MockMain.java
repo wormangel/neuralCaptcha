@@ -20,10 +20,10 @@ public class MockMain implements NeuralNetListener {
 		NeuralCaptcha rec = new NeuralCaptcha(this);
 		rec.treinaRede();
         
-        System.out.println("Resultado: " + rec.identificaCaractere(FileManager.DIRETORIO_TESTE + "a" + "\\" + "8842.bmp"));
-        System.out.println("Resultado: " + rec.identificaCaractere(FileManager.DIRETORIO_TESTE + "b" + "\\" + "8570.bmp"));
+        //System.out.println("Resultado: " + rec.identificaCaractere(FileManager.DIRETORIO_TESTE + "a" + "\\" + "8842.bmp"));
+        //System.out.println("Resultado: " + rec.identificaCaractere(FileManager.DIRETORIO_TESTE + "b" + "\\" + "8570.bmp"));
 		
-		//rec.SalvarRede();
+		rec.salvarRede();
 		//rec.validaRede();
 	}
 

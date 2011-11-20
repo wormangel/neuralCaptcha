@@ -52,16 +52,7 @@ public class NeuralCaptcha {
 		inicializaRede();
 		adicionaListener(listener);
 	}
-
-	public NeuralCaptcha(NeuralNetListener listener, boolean carregaRede) throws IOException, ClassNotFoundException{
-		if (carregaRede) {
-			carregaRede();
-		} else {
-			inicializaRede();
-		}		
-		adicionaListener(listener);
-	}
-
+    
 	public void inicializaRede() {
 		// cria rede
 		rede = new NeuralNet();
@@ -192,10 +183,8 @@ public class NeuralCaptcha {
 	}
 
 	/**
-	 * Recebe uma string correspondente ao caminho no disco para a imagem a ser identificada.
-	 * A imagem � pr�-processada para obter a entrada da rede neural e submetida � mesma em seguida.
+	 * Processa o captcha previamente obtido da internet e identifica seus caracteres.
 	 * 
-	 * @param pathImagemNaoTratada O caminho para a imagem contendo o captcha a ser identificado.
 	 * @throws InterruptedException 
 	 * @throws IOException 
 	 */
@@ -265,42 +254,11 @@ public class NeuralCaptcha {
 		rede.addNeuralNetListener(listener);
 	}
 
-	// M�todos para lidar com a persist�ncia da rede (para n�o ter que treina-la novamente a cada execu��o)
+    public void salvarRede() throws IOException {
+        FileManager.salvarRede(rede);
+    }
 
-	/**
-	 * Salva a rede neural em disco.
-	 * @throws IOException
-	 */
-	public void salvarRede() throws IOException{
-		FileOutputStream stream = new FileOutputStream("C:\\temp\\redeNeural.mlp");
-		ObjectOutputStream out = new ObjectOutputStream(stream);
-		out.writeObject(rede);
-		out.close();
-	}
-
-	/**
-	 * Verifica se a rede neural foi persistidda no caminho pr�-determinado. Se sim, carrega a rede armazenada, se n�o,
-	 * inicializa a rede neural.
-	 * @throws IOException
-	 * @throws ClassNotFoundException
-	 */
-	public void carregaRede() throws IOException, ClassNotFoundException {
-		File redeSalva = new File("C:\\temp\\redeNeural.mlp");
-		if (redeSalva.exists()) {
-			carregaRedeArmazenada();
-		} else {
-			inicializaRede();
-		}
-	}
-
-	/**
-	 * Carrega a rede neural armazenada em disco.
-	 * @throws IOException
-	 * @throws ClassNotFoundException
-	 */
-	public void carregaRedeArmazenada() throws IOException, ClassNotFoundException{
-		FileInputStream stream = new FileInputStream("C:\\temp\\redeNeural.mlp");
-		ObjectInputStream out = new ObjectInputStream(stream);
-		rede = (NeuralNet) out.readObject();
-	}
+    public void carregarRede() throws IOException, ClassNotFoundException {
+        rede = FileManager.carregaRedeArmazenada();
+    }
 }

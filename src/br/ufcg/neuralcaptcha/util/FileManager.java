@@ -1,10 +1,8 @@
 package br.ufcg.neuralcaptcha.util;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import org.joone.net.NeuralNet;
+
+import java.io.*;
 
 public class FileManager {
 	
@@ -22,6 +20,13 @@ public class FileManager {
 	// Validaï¿½ï¿½o
 	public static final String ENTRADA_VALIDACAO = "res/validationInput.txt";
 	public static final String SAIDA_VALIDACAO = "res/validationOutput.txt";
+
+    // Teste
+    public static final String ENTRADA_TESTE = "res/testingInput.txt";
+	public static final String SAIDA_TESTE = "res/testingOutput.txt";
+
+    // Persistência da rede
+    public static final String ARQUIVO_REDE_PERSIST = "res/redeNeural.mlp";
 	
 	/**
 	 * Recebe um array bidimensional de bits e o escreve em um arquivo que servirï¿½ de entrada para a rede neural.
@@ -142,6 +147,30 @@ public class FileManager {
 		}
 		
 		return "res/current/final-captcha.bmp";
+	}
+
+    // Persistência da rede
+
+    /**
+	 * Salva a rede neural em disco.
+	 * @throws IOException
+	 */
+	public static void salvarRede(NeuralNet rede) throws IOException{
+		FileOutputStream stream = new FileOutputStream(ARQUIVO_REDE_PERSIST);
+		ObjectOutputStream out = new ObjectOutputStream(stream);
+		out.writeObject(rede);
+		out.close();
+	}
+
+	/**
+	 * Carrega a rede neural armazenada em disco.
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
+	public static NeuralNet carregaRedeArmazenada() throws IOException, ClassNotFoundException{
+		FileInputStream stream = new FileInputStream(ARQUIVO_REDE_PERSIST);
+		ObjectInputStream out = new ObjectInputStream(stream);
+		return (NeuralNet) out.readObject();
 	}
 
 }
