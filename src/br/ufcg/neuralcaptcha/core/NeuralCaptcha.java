@@ -5,11 +5,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Vector;
 
-import org.joone.engine.FullSynapse;
-import org.joone.engine.LinearLayer;
-import org.joone.engine.Monitor;
-import org.joone.engine.NeuralNetListener;
-import org.joone.engine.SigmoidLayer;
+import org.joone.engine.*;
 import org.joone.engine.learning.TeachingSynapse;
 import org.joone.io.FileInputSynapse;
 import org.joone.io.FileOutputSynapse;
@@ -19,6 +15,9 @@ import org.joone.net.NeuralNet;
 import br.ufcg.neuralcaptcha.util.BitMapper;
 import br.ufcg.neuralcaptcha.util.BitmapExtractor;
 import br.ufcg.neuralcaptcha.util.FileManager;
+import org.joone.net.NeuralNetValidator;
+import org.joone.net.NeuralValidationEvent;
+import org.joone.net.NeuralValidationListener;
 import org.joone.util.LearningSwitch;
 
 
@@ -30,7 +29,10 @@ import org.joone.util.LearningSwitch;
  * @author Lucas Medeiros, Vï¿½tor Amaral, Vï¿½tor Avelino
  *
  */
-public class NeuralCaptcha implements Serializable {
+public class NeuralCaptcha implements Serializable, NeuralNetListener, NeuralValidationListener {
+
+    private final static double THRESHOLD = 0.1;
+    private final static int INTERVALO_DE_VALIDACAO = 20;
 
 	public final static int TAMANHO_CAPTCHA = 5;
 	public final static int TAMANHO_CARACTERE_W = 28, TAMANHO_CARACTERE_H = 45;
@@ -41,17 +43,11 @@ public class NeuralCaptcha implements Serializable {
 	private LinearLayer input;
 	private SigmoidLayer hidden;
 	private SigmoidLayer output;
+    private long startms;
 
 	public NeuralCaptcha() { 
 		inicializaRede();
-	}
-
-	/**
-	 * Cria uma instï¿½ncia do reconhecedor e se registra como observador dos eventos da rede neural.
-	 */
-	public NeuralCaptcha(NeuralNetListener listener) {
-		inicializaRede();
-		adicionaListener(listener);
+        adicionaListener(this);
 	}
     
 	public void inicializaRede() {
@@ -147,14 +143,15 @@ public class NeuralCaptcha implements Serializable {
 		// configure monitor parameters
 		Monitor monitor = rede.getMonitor();
 		monitor.setLearningRate(0.4);
-		monitor.setMomentum(0.3);
+		monitor.setMomentum(0.5);
 		monitor.setTrainingPatterns(1435); // TODO Quantidade de linhas no arquivo de entrada de treinamento
         monitor.setValidationPatterns(1414);
-		monitor.setTotCicles(4);
+		monitor.setTotCicles(100);
 		monitor.setLearning(true);
 
+        startms = System.currentTimeMillis();
 		rede.go(true);
-		System.out.println("Treinamento acabou!. ï¿½ltimo RMSE=" + rede.getMonitor().getGlobalError());
+		System.out.println(System.getProperty("line.separator") + "Treinamento acabou!. Último RMSE=" + rede.getMonitor().getGlobalError());
 	}
 
 	/**
@@ -249,5 +246,56 @@ public class NeuralCaptcha implements Serializable {
 
     public NeuralNet redeNeural() {
         return this.rede;
+    }
+
+    public void netStarted(NeuralNetEvent e) {
+        System.out.println("Rede começou!");
+    }
+
+    public void cicleTerminated(NeuralNetEvent e) {
+        // Prints out the cycle and the training error
+        int cycle = rede.getMonitor().getTotCicles() - rede.getMonitor().getCurrentCicle()+1;
+
+        System.out.println("Ciclo #"+cycle);
+        System.out.println("    Erro de treinamento:   " + rede.getMonitor().getGlobalError());
+
+        if (cycle % INTERVALO_DE_VALIDACAO == 0) { // We validate the net every INTERVALO_DE_VALIDACAO cycles
+
+            // Creates a copy of the neural network
+            rede.getMonitor().setExporting(true);
+            NeuralNet newNet = rede.cloneNet();
+            rede.getMonitor().setExporting(false);
+
+            // Cleans the old listeners
+            // This is a fundamental action to avoid that the validating net
+            // calls the cicleTerminated method of this class
+            newNet.removeAllListeners();
+
+            // Set all the parameters for the validation
+            NeuralNetValidator nnv = new NeuralNetValidator(newNet);
+            nnv.addValidationListener(this);
+            nnv.start();  // Validates the net
+        }
+    }
+
+    public void netStopped(NeuralNetEvent e) {
+        System.out.println("Rede terminou após " + ((System.currentTimeMillis() - startms) / 1000.0) + "s");
+    }
+
+    public void errorChanged(NeuralNetEvent e) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void netStoppedError(NeuralNetEvent e, String error) {
+        System.out.println("Erro! " + error);
+    }
+
+    public void netValidated(NeuralValidationEvent event) {
+        // Shows the RMSE at the end of the cycle
+        NeuralNet NN = (NeuralNet)event.getSource();
+        System.out.println("    Erro de validação: "+NN.getMonitor().getGlobalError());
+        if (NN.getMonitor().getGlobalError() < THRESHOLD){
+            NN.stop();
+        }
     }
 }
