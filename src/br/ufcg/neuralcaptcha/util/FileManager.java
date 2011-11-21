@@ -112,19 +112,19 @@ public class FileManager {
 		FileWriter writerOutput = new FileWriter(outputValidacao);
 		writerOutput.flush();
 		
-		// Pra cada diretï¿½rio (correspondente a um caractere) no diretï¿½rio de validação
+		// Pra cada diretï¿½rio (correspondente a um caractere) no diretï¿½rio de validaï¿½ï¿½o
 		for (String dirCaractere : diretoriosValidacao.list()) {
 			if (dirCaractere.length() > 1){
 				continue;
 			}
 			// Obtï¿½m a lista de imagens no diretï¿½rio desse caractere
             
-			File dirComImagensDoCaractere = new File(DIRETORIO_VALIDACAO + "\\" + dirCaractere);
+			File dirComImagensDoCaractere = new File(DIRETORIO_VALIDACAO + "/" + dirCaractere);
 			// Pra cada imagem desse caractere
 			for (String arquivoImagem : dirComImagensDoCaractere.list()) {
 				
 				// Converte para array de ints
-				int[] imagemEmBits = BitmapExtractor.extraiBitmap(dirComImagensDoCaractere + "\\" + arquivoImagem);
+				int[] imagemEmBits = BitmapExtractor.extraiBitmap(dirComImagensDoCaractere + "/" + arquivoImagem);
 				// Converte para string e escreve no arquivo de entrada
 				writerInput.write(BitMapper.converteArrayDeBitsParaString(imagemEmBits) + System.getProperty("line.separator"));
 				
