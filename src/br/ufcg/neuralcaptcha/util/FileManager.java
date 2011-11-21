@@ -112,7 +112,7 @@ public class FileManager {
 		FileWriter writerOutput = new FileWriter(outputValidacao);
 		writerOutput.flush();
 		
-		// Pra cada diretï¿½rio (letra) no diretï¿½rio de validaï¿½ï¿½o
+		// Pra cada diretï¿½rio (correspondente a um caractere) no diretï¿½rio de validação
 		for (String dirCaractere : diretoriosValidacao.list()) {
 			if (dirCaractere.length() > 1){
 				continue;

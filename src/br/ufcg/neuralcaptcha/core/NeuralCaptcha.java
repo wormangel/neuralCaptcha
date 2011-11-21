@@ -2,6 +2,7 @@ package br.ufcg.neuralcaptcha.core;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Vector;
 
 import org.joone.engine.FullSynapse;
@@ -18,6 +19,7 @@ import org.joone.net.NeuralNet;
 import br.ufcg.neuralcaptcha.util.BitMapper;
 import br.ufcg.neuralcaptcha.util.BitmapExtractor;
 import br.ufcg.neuralcaptcha.util.FileManager;
+import org.joone.util.LearningSwitch;
 
 
 /**
@@ -28,7 +30,7 @@ import br.ufcg.neuralcaptcha.util.FileManager;
  * @author Lucas Medeiros, Vï¿½tor Amaral, Vï¿½tor Avelino
  *
  */
-public class NeuralCaptcha {
+public class NeuralCaptcha implements Serializable {
 
 	public final static int TAMANHO_CAPTCHA = 5;
 	public final static int TAMANHO_CARACTERE_W = 28, TAMANHO_CARACTERE_H = 45;
@@ -87,37 +89,54 @@ public class NeuralCaptcha {
 	}
 
 	public void treinaRede() throws IOException, InterruptedException {
-		// Prepara a entrada para o treinamento da rede
+		// Gera o conjunto de dados de treinamento
 		FileManager.geraArquivosDeTreinamento();
+        // Gera o conjunto de dados de validação
+        FileManager.geraArquivosDeValidacao();
 
-		FileInputSynapse inputSynapse1 = new FileInputSynapse();
-		inputSynapse1.setInputFile(new File(FileManager.ENTRADA_TREINAMENTO));
-		inputSynapse1.setAdvancedColumnSelector(ADVANCED_COLUMN_SELECTOR);
-		//		inputSynapse1.setFirstRow(1);
-		//		inputSynapse1.setLastRow(10); // TODO Quantidade de padroes de treinamento
+        // Conjunto de entrada: TREINAMENTO
+		FileInputSynapse inputSynapseTreinamento = new FileInputSynapse();
+		inputSynapseTreinamento.setInputFile(new File(FileManager.ENTRADA_TREINAMENTO));
+		inputSynapseTreinamento.setAdvancedColumnSelector(ADVANCED_COLUMN_SELECTOR);
+        // Conjunto de entrada: VALIDAÇÃO
+        FileInputSynapse inputSynapseValidacao = new FileInputSynapse();
+		inputSynapseValidacao.setInputFile(new File(FileManager.ENTRADA_VALIDACAO));
+		inputSynapseValidacao.setAdvancedColumnSelector(ADVANCED_COLUMN_SELECTOR);
 
-		// Coloca esta sinapse como entrada da camada de entrada
-		input.addInputSynapse(inputSynapse1);
+        // Switch do conjunto de dados de ENTRADA
+        LearningSwitch switchEntrada = new LearningSwitch();
+        switchEntrada.addTrainingSet(inputSynapseTreinamento);
+        switchEntrada.addValidationSet(inputSynapseValidacao);
 
+		// Coloca o switch de entrada como entrada da camada de entrada
+		input.addInputSynapse(switchEntrada);
+
+        // Conjunto de saída: TREINAMENTO
+		FileInputSynapse desiredSynapseTreinamento = new FileInputSynapse();
+		desiredSynapseTreinamento.setInputFile(new File(FileManager.SAIDA_TREINAMENTO));
+		desiredSynapseTreinamento.setAdvancedColumnSelector("1-31");
+        // Conjunto de saída: VALIDAÇÃO
+        FileInputSynapse desiredSynapseValidacao = new FileInputSynapse();
+		desiredSynapseValidacao.setInputFile(new File(FileManager.SAIDA_VALIDACAO));
+		desiredSynapseValidacao.setAdvancedColumnSelector("1-31");
+
+        // Switch do conjunto de dados de SAÍDA
+        LearningSwitch switchSaida = new LearningSwitch();
+        switchSaida.addTrainingSet(desiredSynapseTreinamento);
+        switchSaida.addValidationSet(desiredSynapseValidacao);
+
+        // Associa o switch de saída com o supervisor
 		TeachingSynapse trainer = new TeachingSynapse();
+		trainer.setDesired(switchSaida);
 
-		// Prepara a saï¿½da para o treinamento da rede
-		FileInputSynapse desiredSynapse1 = new FileInputSynapse();
-		desiredSynapse1.setInputFile(new File(FileManager.SAIDA_TREINAMENTO));
-		desiredSynapse1.setAdvancedColumnSelector("1-31");
-		//		desiredSynapse1.setFirstRow(1);
-		//		desiredSynapse1.setLastRow(10); // TODO Quantidade de padroes de treinamento
-
-		trainer.setDesired(desiredSynapse1);
+        // Coloca esta sinapse como saï¿½da da camada de saï¿½da
+		output.addOutputSynapse(trainer);
 
 		/* Creates the error output file */
 		FileOutputSynapse error = new FileOutputSynapse();
 		error.setFileName("res/error.txt");
 		//error.setBuffered(false);
 		trainer.addResultSynapse(error);
-
-		// Coloca esta sinapse como saï¿½da da camada de saï¿½da
-		output.addOutputSynapse(trainer);
 
 		// Adiciona as camadas criadas ï¿½ rede neural
 		rede.addLayer(input, NeuralNet.INPUT_LAYER);
@@ -127,58 +146,15 @@ public class NeuralCaptcha {
 
 		// configure monitor parameters
 		Monitor monitor = rede.getMonitor();
-		monitor.setLearningRate(0.8);
+		monitor.setLearningRate(0.4);
 		monitor.setMomentum(0.3);
 		monitor.setTrainingPatterns(1435); // TODO Quantidade de linhas no arquivo de entrada de treinamento
-		monitor.setTotCicles(10);
+        monitor.setValidationPatterns(1414);
+		monitor.setTotCicles(4);
 		monitor.setLearning(true);
 
 		rede.go(true);
 		System.out.println("Treinamento acabou!. ï¿½ltimo RMSE=" + rede.getMonitor().getGlobalError());
-	}
-
-	public void validaRede() throws IOException, InterruptedException {
-		// Prepara a entrada para o treinamento da rede
-		FileManager.geraArquivosDeValidacao();
-
-		FileInputSynapse inputSynapse1 = new FileInputSynapse();
-
-		inputSynapse1.setInputFile(new File(FileManager.ENTRADA_VALIDACAO));
-		inputSynapse1.setName("input1");
-		inputSynapse1.setAdvancedColumnSelector(ADVANCED_COLUMN_SELECTOR);
-		inputSynapse1.setFirstRow(1);
-		inputSynapse1.setLastRow(54); // 26 letras - 9 excluï¿½das
-
-		// Coloca esta sinapse como entrada da camada de entrada
-		rede.getInputLayer().addInputSynapse(inputSynapse1);
-
-		// Prepara a saï¿½da para o treinamento da rede
-		FileInputSynapse desiredSynapse1 = new FileInputSynapse();
-
-		desiredSynapse1.setInputFile(new File(FileManager.SAIDA_VALIDACAO));
-		desiredSynapse1.setName("desired1");
-		desiredSynapse1.setAdvancedColumnSelector(ADVANCED_COLUMN_SELECTOR);
-		desiredSynapse1.setFirstRow(1);
-		desiredSynapse1.setLastRow(54);
-
-		TeachingSynapse trainer = new TeachingSynapse();
-		trainer.setDesired(desiredSynapse1);
-
-		// Coloca esta sinapse como saï¿½da da camada de saï¿½da
-		rede.setTeacher(trainer);
-		rede.getOutputLayer().addOutputSynapse(trainer);
-
-		// get the monitor object to train or feed forward
-		Monitor monitor = rede.getMonitor();
-
-		// set the monitor parameters
-		monitor.setLearningRate(0.8);
-		monitor.setMomentum(0.3);
-		monitor.setTrainingPatterns(54);
-		monitor.setTotCicles(150);
-		monitor.setLearning(false);
-		rede.go(true);
-		System.out.println("Network stopped. Last RMSE="+ rede.getMonitor().getGlobalError());
 	}
 
 	/**
@@ -269,5 +245,9 @@ public class NeuralCaptcha {
 
     public void carregarRede() throws IOException, ClassNotFoundException {
         rede = FileManager.carregaRedeArmazenada();
+    }
+
+    public NeuralNet redeNeural() {
+        return this.rede;
     }
 }
