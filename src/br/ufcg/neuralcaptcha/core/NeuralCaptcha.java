@@ -3,6 +3,7 @@ package br.ufcg.neuralcaptcha.core;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.Vector;
 
 import org.joone.engine.*;
@@ -221,6 +222,34 @@ public class NeuralCaptcha implements Serializable, NeuralNetListener, NeuralVal
 		entradaDaRede[0] = BitmapExtractor.extraiBitmap(pathImagemProcessada);
 		return identificaCaptcha(entradaDaRede);
 	}
+
+    public void executaConjuntoDeTeste() throws IOException, InterruptedException {
+        StringBuilder result = new StringBuilder();
+
+        File diretoriosTeste = new File(FileManager.DIRETORIO_TESTE);
+        for (String dirCaractere : diretoriosTeste.list()) {
+
+            result.append(System.getProperty("line.separator") + "Caractere: " + dirCaractere.toUpperCase() +
+                    System.getProperty("line.separator"));
+
+            File dirComImagensDoCaractere = new File(diretoriosTeste + "/" + dirCaractere);
+            int acertos = 0;
+            int totalAmostras = dirComImagensDoCaractere.list().length;
+            for (String arquivoImagem : dirComImagensDoCaractere.list()) {
+                String path = dirComImagensDoCaractere + "/" + arquivoImagem;
+                String respostaDaRede = identificaCaractere(path);
+                System.out.println("Identificou " + dirCaractere.toUpperCase() + " como " + respostaDaRede);
+                if (dirCaractere.toUpperCase().equals(respostaDaRede)){
+                    acertos++;
+                }
+            }
+
+            DecimalFormat df = new DecimalFormat("#.##");
+            result.append("Total: " + totalAmostras + " amostras, " + acertos + " acertos, " +
+                    (totalAmostras - acertos) + " erros, " + df.format(((double) acertos / totalAmostras) * 100.0) + "% de corretude.");
+        }
+        System.out.println(result);
+    }
 
 	public void adicionaListener(NeuralNetListener listener){
 		rede.addNeuralNetListener(listener);

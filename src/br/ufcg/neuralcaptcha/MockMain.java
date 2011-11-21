@@ -3,6 +3,7 @@ package br.ufcg.neuralcaptcha;
 import java.io.IOException;
 import java.io.Serializable;
 
+import br.ufcg.neuralcaptcha.util.FileManager;
 import org.joone.engine.Monitor;
 import org.joone.engine.NeuralNetEvent;
 import org.joone.engine.NeuralNetListener;
@@ -24,11 +25,13 @@ public class MockMain {
 
 	public MockMain() throws IOException, InterruptedException, ClassNotFoundException{
 		rec = new NeuralCaptcha();
-		rec.treinaRede();
+        rec.carregarRede();
+        rec.executaConjuntoDeTeste();
+		//rec.treinaRede();
         
-        //System.out.println("Resultado: " + rec.identificaCaractere(FileManager.DIRETORIO_TESTE + "a" + "\\" + "8842.bmp"));
+        //System.out.println("Resultado: " + rec.identificaCaractere(FileManager.DIRETORIO_TESTE + "l" + "\\" + "7012.bmp"));
 
-		rec.salvarRede();
+		//rec.salvarRede();
 	}
 
 }
