@@ -27,8 +27,8 @@ public class UI {
 	
 	public UI(Display display) {
 		shell = new Shell(display);
-		shell.setText("       Projeto de IA");
-		shell.setSize(230, 280);
+		shell.setText("        Projeto de IA");
+		shell.setSize(230, 310);
 
 		configureLayout(shell);
 		addElementsOnShell();
@@ -95,6 +95,22 @@ public class UI {
 			public void widgetSelected(SelectionEvent arg0) {
 				try {
 					network.treinaRede();
+				} catch (Exception e) {
+					e.printStackTrace();
+					inputBox.setText("ERROR!!!");
+				}
+			}
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+			}
+		});
+		
+		Button saveNetworkButton = new Button(shell, SWT.PUSH);
+		saveNetworkButton.setText("Save network");
+		saveNetworkButton.setLayoutData(new RowData(205, 30));
+		saveNetworkButton.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent arg0) {
+				try {
+					network.salvarRede();
 				} catch (Exception e) {
 					e.printStackTrace();
 					inputBox.setText("ERROR!!!");

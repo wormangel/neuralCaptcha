@@ -50,11 +50,11 @@ public class BitmapExtractor {
 
 		int count = 0;
 		for(int y = 0; y < NeuralCaptcha.TAMANHO_CARACTERE_H; y++){
-			for ( int x=0;x< NeuralCaptcha.TAMANHO_CARACTERE_W; x++ ) {
+			for ( int x=0; x < NeuralCaptcha.TAMANHO_CARACTERE_W; x++ ) {
 				if (img.getRGB(x, y)== java.awt.Color.BLACK.getRGB()) {
 					array[count] = 1;
 				} else {
-					array[count] = 0;
+					array[count] = -1;
 				}
 				count++;
 			}

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.Vector;
 
 import org.joone.engine.*;
@@ -36,7 +37,7 @@ public class NeuralCaptcha implements Serializable, NeuralNetListener, NeuralVal
     private final static int INTERVALO_DE_VALIDACAO = 20;
 
 	public final static int TAMANHO_CAPTCHA = 5;
-	public final static int TAMANHO_CARACTERE_W = 28, TAMANHO_CARACTERE_H = 45;
+	public final static int TAMANHO_CARACTERE_W = 10, TAMANHO_CARACTERE_H = 16;
 	public final static int NEURONIOS_DE_SAIDA = 31; // 26 letras + 10 dï¿½gitos - 5 exclusï¿½es
 	private final static String ADVANCED_COLUMN_SELECTOR = "1-" + String.valueOf(TAMANHO_CARACTERE_W * TAMANHO_CARACTERE_H);
 
@@ -45,7 +46,7 @@ public class NeuralCaptcha implements Serializable, NeuralNetListener, NeuralVal
 	private SigmoidLayer hidden;
 	private SigmoidLayer output;
     private long startms;
-
+    private MemoryOutputSynapse outputSynapse1;
 	public NeuralCaptcha() { 
 		inicializaRede();
         adicionaListener(this);
@@ -68,7 +69,7 @@ public class NeuralCaptcha implements Serializable, NeuralNetListener, NeuralVal
 		// Tamanho da camada de entrada
 		input.setRows(TAMANHO_CARACTERE_W * TAMANHO_CARACTERE_H); // Nï¿½mero de pixels de cada caractere
 		// Tamanho da camada escondida - Configurï¿½vel, altera o desempenho
-		hidden.setRows(100);
+		hidden.setRows(64);
 		// Tamanho da camada de saï¿½da - nï¿½mero de respostas possï¿½veis da rede (nï¿½mero de caracteres reconhecï¿½veis)
 		output.setRows(NEURONIOS_DE_SAIDA); //
 
@@ -88,14 +89,14 @@ public class NeuralCaptcha implements Serializable, NeuralNetListener, NeuralVal
 	public void treinaRede() throws IOException, InterruptedException {
 		// Gera o conjunto de dados de treinamento
 		FileManager.geraArquivosDeTreinamento();
-        // Gera o conjunto de dados de validação
+        // Gera o conjunto de dados de validaï¿½ï¿½o
         FileManager.geraArquivosDeValidacao();
 
         // Conjunto de entrada: TREINAMENTO
 		FileInputSynapse inputSynapseTreinamento = new FileInputSynapse();
 		inputSynapseTreinamento.setInputFile(new File(FileManager.ENTRADA_TREINAMENTO));
 		inputSynapseTreinamento.setAdvancedColumnSelector(ADVANCED_COLUMN_SELECTOR);
-        // Conjunto de entrada: VALIDAÇÃO
+        // Conjunto de entrada: VALIDAï¿½ï¿½O
         FileInputSynapse inputSynapseValidacao = new FileInputSynapse();
 		inputSynapseValidacao.setInputFile(new File(FileManager.ENTRADA_VALIDACAO));
 		inputSynapseValidacao.setAdvancedColumnSelector(ADVANCED_COLUMN_SELECTOR);
@@ -108,25 +109,25 @@ public class NeuralCaptcha implements Serializable, NeuralNetListener, NeuralVal
 		// Coloca o switch de entrada como entrada da camada de entrada
 		input.addInputSynapse(switchEntrada);
 
-        // Conjunto de saída: TREINAMENTO
+        // Conjunto de saï¿½da: TREINAMENTO
 		FileInputSynapse desiredSynapseTreinamento = new FileInputSynapse();
 		desiredSynapseTreinamento.setInputFile(new File(FileManager.SAIDA_TREINAMENTO));
 		desiredSynapseTreinamento.setAdvancedColumnSelector("1-31");
-        // Conjunto de saída: VALIDAÇÃO
+        // Conjunto de saï¿½da: VALIDAï¿½ï¿½O
         FileInputSynapse desiredSynapseValidacao = new FileInputSynapse();
 		desiredSynapseValidacao.setInputFile(new File(FileManager.SAIDA_VALIDACAO));
 		desiredSynapseValidacao.setAdvancedColumnSelector("1-31");
 
-        // Switch do conjunto de dados de SAÍDA
+        // Switch do conjunto de dados de SAï¿½DA
         LearningSwitch switchSaida = new LearningSwitch();
         switchSaida.addTrainingSet(desiredSynapseTreinamento);
         switchSaida.addValidationSet(desiredSynapseValidacao);
 
-        // Associa o switch de saída com o supervisor
+        // Associa o switch de saï¿½da com o supervisor
 		TeachingSynapse trainer = new TeachingSynapse();
 		trainer.setDesired(switchSaida);
 
-        // Coloca esta sinapse como saï¿½da da camada de saï¿½da
+		// Coloca esta sinapse como saï¿½da da camada de saï¿½da
 		output.addOutputSynapse(trainer);
 
 		/* Creates the error output file */
@@ -143,8 +144,8 @@ public class NeuralCaptcha implements Serializable, NeuralNetListener, NeuralVal
 
 		// configure monitor parameters
 		Monitor monitor = rede.getMonitor();
-		monitor.setLearningRate(0.4);
-		monitor.setMomentum(0.5);
+		monitor.setLearningRate(0.1);
+		monitor.setMomentum(0.9);
 		monitor.setTrainingPatterns(1435); // TODO Quantidade de linhas no arquivo de entrada de treinamento
         monitor.setValidationPatterns(1414);
 		monitor.setTotCicles(100);
@@ -152,7 +153,7 @@ public class NeuralCaptcha implements Serializable, NeuralNetListener, NeuralVal
 
         startms = System.currentTimeMillis();
 		rede.go(true);
-		System.out.println(System.getProperty("line.separator") + "Treinamento acabou!. Último RMSE=" + rede.getMonitor().getGlobalError());
+		System.out.println(System.getProperty("line.separator") + "Treinamento acabou!. ï¿½ltimo RMSE=" + rede.getMonitor().getGlobalError());
 	}
 
 	/**
@@ -180,33 +181,31 @@ public class NeuralCaptcha implements Serializable, NeuralNetListener, NeuralVal
 		File arquivoDeEntrada = FileManager.criaArquivoParaReconhecimento(entradaDaRede);
 
 		// Remove sinapses de entrada anteriores
-		rede.getInputLayer().removeAllInputs();
+		input.removeAllInputs();
 
 		// Adiciona uma nova camada de entrada 
 		FileInputSynapse inputSynapse1 = new FileInputSynapse();
 
 		inputSynapse1.setInputFile(arquivoDeEntrada);
-		inputSynapse1.setName("input1");
+//		inputSynapse1.setName("input1");
 		inputSynapse1.setAdvancedColumnSelector(ADVANCED_COLUMN_SELECTOR);
 
 		// Coloca esta sinapse como entrada da camada de entrada
-		rede.getInputLayer().addInputSynapse(inputSynapse1);
-
-		// Remove sinapses de saï¿½da anteriores
-		rede.getOutputLayer().removeAllOutputs();
+		input.addInputSynapse(inputSynapse1);
 
 		// Adiciona uma nova camada de saï¿½da
-		MemoryOutputSynapse outputSynapse1 = new MemoryOutputSynapse();
-
+		outputSynapse1 = new MemoryOutputSynapse();
+		outputSynapse1.setEnabled(true);
+		
 		// Coloca esta sinapse como saï¿½da da camada de entrada
-		rede.getOutputLayer().addOutputSynapse(outputSynapse1);
+		output.addOutputSynapse(outputSynapse1);
 
 		rede.getMonitor().setTotCicles(1);
 		rede.getMonitor().setTrainingPatterns(1);
 		rede.getMonitor().setLearning(false);
 		rede.go();
-		double[] resposta = outputSynapse1.getNextPattern();
 
+		double[] resposta = outputSynapse1.getNextPattern();
 		return BitMapper.traduzRespostaDaRede(resposta);
 	}
 
@@ -226,7 +225,7 @@ public class NeuralCaptcha implements Serializable, NeuralNetListener, NeuralVal
     public void executaConjuntoDeTeste() throws IOException, InterruptedException {
         StringBuilder result = new StringBuilder();
 
-        File diretoriosTeste = new File(FileManager.DIRETORIO_TESTE);
+        File diretoriosTeste = new File(FileManager.DIRETORIO_TREINAMENTO);
         for (String dirCaractere : diretoriosTeste.list()) {
 
             result.append(System.getProperty("line.separator") + "Caractere: " + dirCaractere.toUpperCase() +
@@ -278,7 +277,7 @@ public class NeuralCaptcha implements Serializable, NeuralNetListener, NeuralVal
     }
 
     public void netStarted(NeuralNetEvent e) {
-        System.out.println("Rede começou!");
+        System.out.println("Rede comeï¿½ou!");
     }
 
     public void cicleTerminated(NeuralNetEvent e) {
@@ -308,7 +307,7 @@ public class NeuralCaptcha implements Serializable, NeuralNetListener, NeuralVal
     }
 
     public void netStopped(NeuralNetEvent e) {
-        System.out.println("Rede terminou após " + ((System.currentTimeMillis() - startms) / 1000.0) + "s");
+        System.out.println("Rede terminou apï¿½s " + ((System.currentTimeMillis() - startms) / 1000.0) + "s");
     }
 
     public void errorChanged(NeuralNetEvent e) {
@@ -322,7 +321,7 @@ public class NeuralCaptcha implements Serializable, NeuralNetListener, NeuralVal
     public void netValidated(NeuralValidationEvent event) {
         // Shows the RMSE at the end of the cycle
         NeuralNet NN = (NeuralNet)event.getSource();
-        System.out.println("    Erro de validação: "+NN.getMonitor().getGlobalError());
+        System.out.println("    Erro de validaï¿½ï¿½o: "+NN.getMonitor().getGlobalError());
         if (NN.getMonitor().getGlobalError() < THRESHOLD){
             NN.stop();
         }

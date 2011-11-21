@@ -154,8 +154,8 @@ public class BitMapper {
      */
     private static int obtemIndiceComMaiorValorNoArray(double[] array){
         int bigger = 0;
-        for(int i = 1; i < array.length; i++){
-            if (array[i] > array[0]){
+        for(int i = 1; i < array.length; i++) {
+            if (array[i] > array[bigger]){
                 bigger = i;
             }
         }

@@ -9,7 +9,7 @@ public class FileManager {
 	// Diret�rios contendo as imagens
 	public static final String DIRETORIO_TREINAMENTO = "res/training/";
 	public static final String DIRETORIO_VALIDACAO = "res/validation/";
-    public static final String DIRETORIO_TESTE = "res/testing/";
+    public static final String DIRETORIO_TESTE = "res/training/";
     public static final String DIRETORIO_LIVE = "res/current/";
     public static final String DIRETORIO_LIVE_LETRAS = "res/current/letters/";
 	
