@@ -43,18 +43,18 @@ public class BitmapExtractor {
      * @param pathImg O path para a imagem de que se deseja extrair o bitmap
      * @return Um array de inteiros contendo o bitmap da imagem.
      */
-    public static int[] extraiBitmap(String pathImg) throws IOException {
+    public static double[] extraiBitmap(String pathImg) throws IOException {
     	BufferedImage img = ImageIO.read(new File(pathImg));
         
-        int[] array = new int[NeuralCaptcha.TAMANHO_CARACTERE_W * NeuralCaptcha.TAMANHO_CARACTERE_H];
+        double[] array = new double[NeuralCaptcha.TAMANHO_CARACTERE_W * NeuralCaptcha.TAMANHO_CARACTERE_H];
 
 		int count = 0;
 		for(int y = 0; y < NeuralCaptcha.TAMANHO_CARACTERE_H; y++){
 			for ( int x=0; x < NeuralCaptcha.TAMANHO_CARACTERE_W; x++ ) {
 				if (img.getRGB(x, y)== java.awt.Color.BLACK.getRGB()) {
-					array[count] = 1;
+					array[count] = 1.0;
 				} else {
-					array[count] = -1;
+					array[count] = -1.0;
 				}
 				count++;
 			}

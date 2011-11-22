@@ -9,7 +9,7 @@ public class FileManager {
 	// Diret�rios contendo as imagens
 	public static final String DIRETORIO_TREINAMENTO = "res/training/";
 	public static final String DIRETORIO_VALIDACAO = "res/validation/";
-    public static final String DIRETORIO_TESTE = "res/training/";
+    public static final String DIRETORIO_TESTE = "res/testing/";
     public static final String DIRETORIO_LIVE = "res/current/";
     public static final String DIRETORIO_LIVE_LETRAS = "res/current/letters/";
 	
@@ -35,7 +35,7 @@ public class FileManager {
 	 * @return O arquivo criado que servir� de entrada para a rede neural
 	 * @throws IOException
 	 */
-	public static File criaArquivoParaReconhecimento(int[][] entradaDaRede) throws IOException{
+	public static File criaArquivoParaReconhecimento(double[][] entradaDaRede) throws IOException{
 		File arquivoDeEntrada = new File("C:\\entradaNeural.txt");
     	FileWriter writer = new FileWriter(arquivoDeEntrada);
     	writer.flush();
@@ -81,7 +81,7 @@ public class FileManager {
 			// Pra cada imagem desse caractere
 			for (String arquivoImagem : dirComImagensDoCaractere.list()) {
 				// Converte para array de ints
-				int[] imagemEmBits = BitmapExtractor.extraiBitmap(dirComImagensDoCaractere + "/" + arquivoImagem);
+				double[] imagemEmBits = BitmapExtractor.extraiBitmap(dirComImagensDoCaractere + "/" + arquivoImagem);
 				// Converte para string e escreve no arquivo de entrada
 				writerInput.write(BitMapper.converteArrayDeBitsParaString(imagemEmBits) + System.getProperty("line.separator"));
 				
@@ -124,7 +124,7 @@ public class FileManager {
 			for (String arquivoImagem : dirComImagensDoCaractere.list()) {
 				
 				// Converte para array de ints
-				int[] imagemEmBits = BitmapExtractor.extraiBitmap(dirComImagensDoCaractere + "/" + arquivoImagem);
+				double[] imagemEmBits = BitmapExtractor.extraiBitmap(dirComImagensDoCaractere + "/" + arquivoImagem);
 				// Converte para string e escreve no arquivo de entrada
 				writerInput.write(BitMapper.converteArrayDeBitsParaString(imagemEmBits) + System.getProperty("line.separator"));
 				
